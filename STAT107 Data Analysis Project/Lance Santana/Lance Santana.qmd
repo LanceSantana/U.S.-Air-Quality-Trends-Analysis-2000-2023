@@ -1,0 +1,36 @@
+---
+title: "Lance"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+```{r}
+#read pollution.csv data set
+getwd()
+pollution_data <- read.csv("/Users/lancesantana/Downloads/School Files/Active Files/STAT_107 Files/STAT_107_Git_Files/Stats107_Project/pollution_2000_2023.csv")
+```
+
+```{r}
+#finding relevant data
+OZmean_vector <- pollution_data$O3.Mean
+highest_OZmean <- max(OZmean_vector, na.rm = TRUE)
+lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
+mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
+sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
+
+list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
+list_OZ_mean_data
+```
+
+```{r}
+#Worst Ozone Cities
+top_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = TRUE),]
+top_3_oz_cities <- top_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
+top_3_oz_cities
+```
