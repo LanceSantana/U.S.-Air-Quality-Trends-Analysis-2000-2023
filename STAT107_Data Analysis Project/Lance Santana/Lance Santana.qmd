@@ -36,6 +36,7 @@ lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
 mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
 sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
 
+#display statistics
 list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
 print("Ozone statisticsa for all cities in the United States")
 list_OZ_mean_data
@@ -85,17 +86,74 @@ points(oz_cities_match_top$long, oz_cities_match_top$lat, col = "red", pch = 7)
 points(oz_cities_match_bottom$long, oz_cities_match_bottom$lat, col = "blue", pch = 7)
 legend("bottomright", legend = c("Highest Ozone", "Lowest Ozone"), col = c("red", "blue"), pch = c(7, 7), title = "Legend")
 
-  
-
-
 
 ```
 
 ```{r}
-pollution_data
+#Collects data for California
+cali_data <- pollution_data %>%
+  filter(State == "California")
 
-oz_state_means <-
+#Collects data for Washington
+washi_data <- pollution_data %>%
+  filter(State == "Washington")
+
+#Graphs box plot from California data
+ggplot(cali_data, aes(x = O3.Mean)) +
+  geom_boxplot(fill = "red", color = "black") + 
+  labs(title = "California", x = "City Ozone Average") +
+  xlim(-.0006, 0.102) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
 
 
-boxplot(x = state_name, y = state_oz,)
+#Graphs box plot from California data
+ggplot(washi_data, aes(x = O3.Mean)) +
+  geom_boxplot(fill = "blue", color = "black") +
+  xlim(-.0006, 0.102) +
+  labs(title = "Washington", x = "City Ozone Average")  +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+```{r}
+
+oz_mean_by_state <- pollution_data %>%
+  group_by(State) %>%
+  summarize(average_ozone_mean = mean(O3.Mean, na.rm = TRUE)) %>%
+  arrange(desc(average_ozone_mean))
+
+  
+ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average_ozone_mean)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  geom_hline(yintercept = median(oz_mean_by_state$average_ozone_mean), color = "red", linetype = "dashed", size = 1) +
+  labs(title = "State Mean Ozone Levels", x = "State", y = "Average City Ozone") +
+  theme(
+    axis.text.x = element_blank()
+  )
+
+#Calculate highest and lowest average state ozone
+highest_ozone_state_value <- max(oz_mean_by_state$average_ozone_mean)
+lowest_ozone_state_value <- min(oz_mean_by_state$average_ozone_mean)
+median_ozone_state_value <- median(oz_mean_by_state$average_ozone_mean)
+
+#Uses highest and lowest to find highest and lowest states
+higest_ozone_state <- oz_mean_by_state %>%
+  filter(average_ozone_mean == highest_ozone_state_value)
+
+lowest_ozone_state <- oz_mean_by_state %>%
+  filter(average_ozone_mean == lowest_ozone_state_value)
+
+#prints high / low states and median state ozone 
+cat("State with highest average ozone level:\n", higest_ozone_state$State, higest_ozone_state$average_ozone_mean,"\n\n") 
+cat("State with lowest average ozone level:\n", lowest_ozone_state$State, lowest_ozone_state$average_ozone_mean,"\n\n") 
+cat("Median State Ozone:", median(oz_mean_by_state$average_ozone_mean))
+
+#Comparison of California and Washington to previous data
+
 ```
