@@ -1,0 +1,4 @@
+```{r}
+pollution<- read.csv('/Users/Gustavo/Downloads/pollution_2000_2023.csv')
+pollution
+```
