@@ -19,14 +19,17 @@ install.packages("maps")
 install.packages("tidyverse")
 ```
 
+data \<- read.csv("pollution_2000_2023.csv")
+
 ```{r}
 #read pollution.csv data set
 getwd()
 pollution_data <- read.csv("/Users/lancesantana/Downloads/School Files/Active Files/STAT_107 Files/STAT_107_Git_Files/Stats107_Project/pollution_2000_2023.csv")
+pollution_data
 ```
 
 ```{r}
-#finding relevant data
+#finding relevant ozone data
 OZmean_vector <- pollution_data$O3.Mean
 highest_OZmean <- max(OZmean_vector, na.rm = TRUE)
 lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
@@ -34,20 +37,28 @@ mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
 sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
 
 list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
+print("Ozone statisticsa for all cities in the United States")
 list_OZ_mean_data
 ```
 
 ```{r}
-#Worst Ozone Cities
+#Sorts highest ozone cities into a variable
 top_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = TRUE),]
 top_3_oz_cities <- top_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
 top_3_oz_cities
+
+#Sorts lowest ozone cities into a variable
+bottom_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = FALSE),]
+bottom_3_oz_cities <- bottom_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
+bottom_3_oz_cities
 ```
 
 ```{r}
 library(ggplot2)
 library(maps)
 library(tidyverse)
+
+#creating cities data set, needed for maping as dataset contains city cordinates
 data("us.cities")
 us_cities <- us.cities
 us_cities$name <- sapply(strsplit(us_cities$name," "), function(x) x[1])
@@ -60,16 +71,31 @@ norristown_info <- data.frame(
 )
 us_cities <- bind_rows(us_cities, norristown_info)
 
-oz_cities_match <- us_cities %>%
+#set variable with highest ozone city cordinates
+oz_cities_match_top <- us_cities %>%
   filter(name %in% top_3_oz_cities$City)
 
+#set variable with lowest ozone city cordinates
+oz_cities_match_bottom <- us_cities %>%
+  filter(name %in% bottom_3_oz_cities$City)
 
+#maps cities 
 maps ::map("state")
-points(oz_cities_match$long, oz_cities_match$lat, col = "blue", pch = 7)
-legend("bottomright", legend = "Highest Ozone", col = "blue", pch = 7, title = "Legend")
+points(oz_cities_match_top$long, oz_cities_match_top$lat, col = "red", pch = 7)
+points(oz_cities_match_bottom$long, oz_cities_match_bottom$lat, col = "blue", pch = 7)
+legend("bottomright", legend = c("Highest Ozone", "Lowest Ozone"), col = c("red", "blue"), pch = c(7, 7), title = "Legend")
 
   
 
 
 
+```
+
+```{r}
+pollution_data
+
+oz_state_means <-
+
+
+boxplot(x = state_name, y = state_oz,)
 ```
