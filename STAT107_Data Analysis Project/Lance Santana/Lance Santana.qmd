@@ -19,47 +19,48 @@ install.packages("maps")
 install.packages("tidyverse")
 ```
 
-data \<- read.csv("pollution_2000_2023.csv")
+```{r}
+#Loading libraries
+library(ggplot2)
+library(maps)
+library(tidyverse)
+```
 
 ```{r}
-#read pollution.csv data set
+#Read pollution.csv data set
 getwd()
 pollution_data <- read.csv("/Users/lancesantana/Downloads/School Files/Active Files/STAT_107 Files/STAT_107_Git_Files/Stats107_Project/pollution_2000_2023.csv")
 pollution_data
 ```
 
 ```{r}
-#finding relevant ozone data
+#Finding relevant ozone data
 OZmean_vector <- pollution_data$O3.Mean
 highest_OZmean <- max(OZmean_vector, na.rm = TRUE)
 lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
 mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
 sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
 
-#display statistics
+#Display statistics
 list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
-print("Ozone statisticsa for all cities in the United States")
+print("Ozone statistics for all cities in the United States")
 list_OZ_mean_data
 ```
 
 ```{r}
-#Sorts highest ozone cities into a variable
+#Sorts highest three ozone cities into a data frame
 top_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = TRUE),]
 top_3_oz_cities <- top_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
 top_3_oz_cities
 
-#Sorts lowest ozone cities into a variable
+#Sorts lowest three ozone cities into a data frame
 bottom_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = FALSE),]
 bottom_3_oz_cities <- bottom_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
 bottom_3_oz_cities
 ```
 
 ```{r}
-library(ggplot2)
-library(maps)
-library(tidyverse)
-
-#creating cities data set, needed for maping as dataset contains city cordinates
+#Creates us.cities, needed for maping as dataset contains city cordinates
 data("us.cities")
 us_cities <- us.cities
 us_cities$name <- sapply(strsplit(us_cities$name," "), function(x) x[1])
@@ -122,13 +123,13 @@ ggplot(washi_data, aes(x = O3.Mean)) +
 ```
 
 ```{r}
-
+#Preparing mean state data to be graphed by grouping and ordering
 oz_mean_by_state <- pollution_data %>%
   group_by(State) %>%
   summarize(average_ozone_mean = mean(O3.Mean, na.rm = TRUE)) %>%
   arrange(desc(average_ozone_mean))
 
-  
+#Graphing a plot of all states average ozone with dashed median line
 ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average_ozone_mean)) +
   geom_bar(stat = "identity", fill = "blue") +
   geom_hline(yintercept = median(oz_mean_by_state$average_ozone_mean), color = "red", linetype = "dashed", size = 1) +
@@ -137,12 +138,12 @@ ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average
     axis.text.x = element_blank()
   )
 
-#Calculate highest and lowest average state ozone
+#Calculate highest, lowest average state ozone and median average value
 highest_ozone_state_value <- max(oz_mean_by_state$average_ozone_mean)
 lowest_ozone_state_value <- min(oz_mean_by_state$average_ozone_mean)
 median_ozone_state_value <- median(oz_mean_by_state$average_ozone_mean)
 
-#Uses highest and lowest to find highest and lowest states
+#Uses highest and lowest values to find highest and lowest states
 higest_ozone_state <- oz_mean_by_state %>%
   filter(average_ozone_mean == highest_ozone_state_value)
 
@@ -152,8 +153,17 @@ lowest_ozone_state <- oz_mean_by_state %>%
 #prints high / low states and median state ozone 
 cat("State with highest average ozone level:\n", higest_ozone_state$State, higest_ozone_state$average_ozone_mean,"\n\n") 
 cat("State with lowest average ozone level:\n", lowest_ozone_state$State, lowest_ozone_state$average_ozone_mean,"\n\n") 
-cat("Median State Ozone:", median(oz_mean_by_state$average_ozone_mean))
+cat("Median State Ozone:", median(oz_mean_by_state$average_ozone_mean),"\n\n")
+
 
 #Comparison of California and Washington to previous data
+print("California Average Ozone:")
+mean(cali_data$O3.Mean)
+cat("California's average ozone is ", higest_ozone_state$average_ozone_mean - mean(cali_data$O3.Mean), " below the highest state average\n")
+cat("California's average ozone is ", mean(cali_data$O3.Mean) - median(oz_mean_by_state$average_ozone_mean), " above the median\n\n")
 
+print("Washington Average Ozone:")
+mean(washi_data$O3.Mean)
+cat("Washington's average ozone is ", mean(washi_data$O3.Mean) - lowest_ozone_state$average_ozone_mean, " above the lowest state average\n")
+cat("Washington's average ozone is ", median(oz_mean_by_state$average_ozone_mean) - mean(washi_data$O3.Mean), " below the median\n\n")
 ```
