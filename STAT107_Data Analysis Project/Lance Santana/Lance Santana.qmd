@@ -25,6 +25,7 @@ data \<- read.csv("pollution_2000_2023.csv")
 #read pollution.csv data set
 getwd()
 pollution_data <- read.csv("/Users/lancesantana/Downloads/School Files/Active Files/STAT_107 Files/STAT_107_Git_Files/Stats107_Project/pollution_2000_2023.csv")
+pollution_data
 ```
 
 ```{r}
