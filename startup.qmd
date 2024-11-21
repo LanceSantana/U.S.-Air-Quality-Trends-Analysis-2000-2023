@@ -36,3 +36,11 @@ install.packages("tidyverse")
 
 library(tidyverse)
 ```
+<<<<<<< HEAD
+=======
+
+```{r}
+
+mydata <- read_csv(unz("pollution_2000_2023.csv.zip", "pollution_2000_2023.csv"))
+```
+>>>>>>> ba0b8c9 (committing)
