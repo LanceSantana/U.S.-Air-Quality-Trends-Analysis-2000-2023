@@ -1,1 +1,9 @@
 hi
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+airquality_data <- read_csv("/Users/ivana/Downloads/Stats_107R/Stats107_Project/pollution_2000_2023.csv")
+```
