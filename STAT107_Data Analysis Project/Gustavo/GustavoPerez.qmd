@@ -12,15 +12,23 @@ Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean valu
 Air Quality Map by State
 
 ```{r}
-pollution<- read.csv('/Users/Gustavo/Downloads/pollution_2000_2023.csv')
+pollution<- read.csv('/Users/Gustavo/GitRStudio/pollution_2000_2023.csv')
+```
 
-pmean<- pollution$CO.Mean
+
+
+```{r}
+pollution<- read.csv('/Users/Gustavo/GitRStudio/pollution_2000_2023.csv')
+
 PH<-pollution %>%
   filter(City %in% c('Phoenix'))%>%
   arrange(desc(Date))
-head(PH,10)
-
-
-
-
+CO_mean_data<-numeric()
+for (i in 2000:2023){
+  PH_data<- PH %>%
+    filter(year(Date)==i)
+  CO_data<-c(mean(PH_data$CO.Mean))
+  CO_mean_data<- c(CO_mean_data,CO_data)
+}
+CO_mean_data
 ```
