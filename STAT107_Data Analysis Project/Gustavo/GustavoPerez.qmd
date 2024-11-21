@@ -1,4 +1,26 @@
 Hello
+
+```{r}
+
+library(tidyverse)
+```
+
+
+
+Question: How has the average carbon monoxide (CO) level changed yearly in Phoenix?
+Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values.
+Air Quality Map by State
+
 ```{r}
 pollution<- read.csv('/Users/Gustavo/Downloads/pollution_2000_2023.csv')
+
+pmean<- pollution$CO.Mean
+PH<-pollution %>%
+  filter(City %in% c('Phoenix'))%>%
+  arrange(desc(Date))
+head(PH,10)
+
+
+
+
 ```
