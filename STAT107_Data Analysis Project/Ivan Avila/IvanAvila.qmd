@@ -60,5 +60,52 @@ ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_N
 Question: How have NO2 levels changed over time in a selected city? Task: Filter for a specific city and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
 
 ```{r}
+#Function filters and plots inputed city from dataset
+analyze_city_pollution <- function(data, city_name) {
+  city_data <- data %>%
+    filter(City == city_name) %>%
+    mutate(Year = as.integer(format(as.Date(Date, format = "%Y-%m-%d"), "%Y")))
+  
+#Checks if City input is indeed in the dataset  
+  if (nrow(city_data) == 0) {
+    stop(paste("No data available for", city_name))
+  }
+  
+  city_yearly <- city_data %>%
+    group_by(Year) %>%
+    summarize(Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+              Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+              Max_O3 = max(`CO AQI`, na.rm = TRUE),
+              Max_CO = max(`O3 AQI`, na.rm = TRUE),
+              Max_SO2 = max(`SO2 AQI`, na.rm = TRUE))
+  
+  plot_mean_NO2 <- ggplot(city_yearly, aes(x = Year)) +
+    geom_line(aes(y = Mean_NO2, color = "Mean NO2"), size = 1) +
+    geom_point(aes(y = Mean_NO2, color = "Mean NO2"), size = 2) +
+    labs(title = paste("Yearly Mean NO2 Levels in", city_name),
+         x = "Year", y = "NO2 AQI",
+         color = "Legend")
+  
+  plot_max_pollutants <- ggplot(city_yearly, aes(x = Year)) +
+    geom_line(aes(y = Max_NO2, color = "Max NO2"), size = 1) +
+    geom_line(aes(y = Max_O3, color = "Max O3"), size = 1, linetype = "dashed") +
+    geom_line(aes(y = Max_CO, color = "Max CO"), size = 1, linetype = "dotted") +
+    geom_line(aes(y = Max_SO2, color = "Max SO2"), size = 1, linetype = "dotdash") +
+    labs(title = paste("Yearly Maximum Values of Pollutants in", city_name),
+         x = "Year", y = "Pollutatnt AQI",
+         color = "Pollutants") 
+  return(list(Mean_NO2_Plot = plot_mean_NO2, MAx_Pollutants_Plot = plot_max_pollutants))
+}
+```
 
+```{r}
+pheonix_plots <- analyze_city_pollution(data = airquality_data, city_name = "Phoenix")
+
+pheonix_plots
+```
+
+```{r}
+plots_LA <- analyze_city_pollution(data = airquality_data, city_name = "Los Angeles")
+
+plots_LA
 ```
