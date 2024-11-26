@@ -21,3 +21,17 @@ library(tidyverse)
 ```{r}
 airquality_data <- read_csv("/Users/ivana/Downloads/Stats_107R/Stats107_Project/pollution_2000_2023.csv")
 ```
+
+Question: Which states have the highest average levels of nitrogen dioxide (NO2) AQI?
+
+Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
+
+```{r}
+
+```
+
+Question: How have NO2 levels changed over time in a selected city? Task: Filter for a specific city and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
+
+```{r}
+
+```
