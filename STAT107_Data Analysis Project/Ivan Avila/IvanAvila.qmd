@@ -1,7 +1,7 @@
 ---
 title: "AvilaIvan_STAT107_Project"
 author: "Ivan Avila"
-date: "November 21st, 2024"
+date: "November 26th, 2024"
 format: html
 editor: visual
 ---
@@ -12,10 +12,19 @@ Quarto enables you to weave together content and executable code into a finished
 
 ## Running Code
 
-hi
+Packages installed
+
+```{r}
+install.packages("maps")
+install.packages("tidyverse")
+```
+
+Libraries Used
 
 ```{r}
 library(tidyverse)
+
+library(maps)
 ```
 
 ```{r}
@@ -27,6 +36,24 @@ Question: Which states have the highest average levels of nitrogen dioxide (NO2)
 Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
 
 ```{r}
+state_avg_NO2 <- airquality_data %>%
+  group_by(State) %>%
+  summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
+  mutate(State = tolower(State))
+
+
+map_data_states <- map_data("state")
+
+avg_NO2_merged_states <- map_data_states %>%
+  left_join(state_avg_NO2, by = c("region" = "State"))
+
+ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+  geom_polygon(color = "white") +
+  scale_fill_gradient(low = "blue", high = "red") +
+  labs(title = "Average NO2 AQI by State",
+       fill = "Avg_NO2_AQI") 
+
+  
 
 ```
 
