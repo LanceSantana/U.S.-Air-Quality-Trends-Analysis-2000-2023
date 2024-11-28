@@ -28,56 +28,33 @@ library(tidyverse)
 
 ```{r}
 #Read pollution.csv data set
-getwd()
 pollution_data <- read.csv("/Users/lancesantana/Downloads/School Files/Active Files/STAT_107 Files/STAT_107_Git_Files/Stats107_Project/pollution_2000_2023.csv")
-pollution_data
 ```
 
 ```{r}
-#Finding relevant ozone data
-OZmean_vector <- pollution_data$O3.Mean
-highest_OZmean <- max(OZmean_vector, na.rm = TRUE)
-lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
-mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
-sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
+#Sorts highest three ozone samples into a data frame
+top_3_oz_samples <- pollution_data[order(pollution_data$O3.Mean, decreasing = TRUE),]
+top_3_oz_samples <- top_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
+top_3_oz_samples
 
-#Display statistics
-list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
-print("Ozone statistics for all cities in the United States")
-list_OZ_mean_data
+#Sorts lowest three ozone samples into a data frame
+bottom_3_oz_samples <- pollution_data[order(pollution_data$O3.Mean, decreasing = FALSE),]
+bottom_3_oz_samples <- bottom_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
+bottom_3_oz_samples
 ```
 
-```{r}
-#Sorts highest three ozone cities into a data frame
-top_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = TRUE),]
-top_3_oz_cities <- top_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
-top_3_oz_cities
-
-#Sorts lowest three ozone cities into a data frame
-bottom_3_oz_cities <- pollution_data[order(pollution_data$O3.Mean, decreasing = FALSE),]
-bottom_3_oz_cities <- bottom_3_oz_cities[1:3, c("State", "City", "O3.Mean")]
-bottom_3_oz_cities
-```
 
 ```{r}
-#Creates us.cities, needed for maping as dataset contains city cordinates
+#Creates us.cities, needed for maping, contains city coordinators
 data("us.cities")
 us_cities <- us.cities
 us_cities$name <- sapply(strsplit(us_cities$name," "), function(x) x[1])
 
-#Norristown is not in us.cities data. Longitude and latitude added manually
-norristown_info <- data.frame(
-  name = "Norristown",
-  long = -75.3437,
-  lat = 40.1215 
-)
-us_cities <- bind_rows(us_cities, norristown_info)
-
-#set variable with highest ozone city cordinates
+#set variable with highest ozone city coordinators
 oz_cities_match_top <- us_cities %>%
   filter(name %in% top_3_oz_cities$City)
 
-#set variable with lowest ozone city cordinates
+#set variable with lowest ozone city coordinators
 oz_cities_match_bottom <- us_cities %>%
   filter(name %in% bottom_3_oz_cities$City)
 
@@ -89,6 +66,7 @@ legend("bottomright", legend = c("Highest Ozone", "Lowest Ozone"), col = c("red"
 
 
 ```
+
 
 ```{r}
 #Collects data for California
@@ -102,7 +80,7 @@ washi_data <- pollution_data %>%
 #Graphs box plot from California data
 ggplot(cali_data, aes(x = O3.Mean)) +
   geom_boxplot(fill = "red", color = "black") + 
-  labs(title = "California", x = "City Ozone Average") +
+  labs(title = "California", x = "Ozone Samples") +
   xlim(-.0006, 0.102) +
   theme(
     axis.text.y = element_blank(),
@@ -114,7 +92,7 @@ ggplot(cali_data, aes(x = O3.Mean)) +
 ggplot(washi_data, aes(x = O3.Mean)) +
   geom_boxplot(fill = "blue", color = "black") +
   xlim(-.0006, 0.102) +
-  labs(title = "Washington", x = "City Ozone Average")  +
+  labs(title = "Washington", x = "Ozone Samples")  +
   theme(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank()
@@ -122,22 +100,39 @@ ggplot(washi_data, aes(x = O3.Mean)) +
 
 ```
 
+
 ```{r}
-#Preparing mean state data to be graphed by grouping and ordering
+#Preparing mean state ozone data by grouping and ordering
 oz_mean_by_state <- pollution_data %>%
   group_by(State) %>%
   summarize(average_ozone_mean = mean(O3.Mean, na.rm = TRUE)) %>%
   arrange(desc(average_ozone_mean))
 
-#Graphing a plot of all states average ozone with dashed median line
+#Graphing all states average ozone with dashed median line
 ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average_ozone_mean)) +
   geom_bar(stat = "identity", fill = "blue") +
-  geom_hline(yintercept = median(oz_mean_by_state$average_ozone_mean), color = "red", linetype = "dashed", size = 1) +
+  geom_hline(yintercept = median(oz_mean_by_state$average_ozone_mean), color = "red", linetype = "dashed", linewidth = 1) +
   labs(title = "State Mean Ozone Levels", x = "State", y = "Average City Ozone") +
   theme(
     axis.text.x = element_blank()
   )
 
+#Calculate highest, lowest average state ozone and median average value
+highest_ozone_state_value <- max(oz_mean_by_state$average_ozone_mean)
+lowest_ozone_state_value <- min(oz_mean_by_state$average_ozone_mean)
+median_ozone_state_value <- median(oz_mean_by_state$average_ozone_mean)
+
+#Finds highest and lowest states by mean ozone
+higest_ozone_state <- oz_mean_by_state %>%
+  filter(average_ozone_mean == highest_ozone_state_value)
+
+lowest_ozone_state <- oz_mean_by_state %>%
+  filter(average_ozone_mean == lowest_ozone_state_value)
+
+```
+
+
+```{r}
 #Calculate highest, lowest average state ozone and median average value
 highest_ozone_state_value <- max(oz_mean_by_state$average_ozone_mean)
 lowest_ozone_state_value <- min(oz_mean_by_state$average_ozone_mean)
@@ -166,4 +161,19 @@ print("Washington Average Ozone:")
 mean(washi_data$O3.Mean)
 cat("Washington's average ozone is ", mean(washi_data$O3.Mean) - lowest_ozone_state$average_ozone_mean, " above the lowest state average\n")
 cat("Washington's average ozone is ", median(oz_mean_by_state$average_ozone_mean) - mean(washi_data$O3.Mean), " below the median\n\n")
+```
+
+
+```{r}
+#Finding relevant ozone data
+OZmean_vector <- pollution_data$O3.Mean
+highest_OZmean <- max(OZmean_vector, na.rm = TRUE)
+lowest_OZmean <- min(OZmean_vector, na.rm = TRUE)
+mean_OZmean <- mean(OZmean_vector, na.rm = TRUE)
+sd_OZmean <- sd(OZmean_vector, na.rm = TRUE)
+
+#Display previously found statistics
+list_OZ_mean_data <- list(higest_mean = highest_OZmean, lowest_mean = lowest_OZmean, mean_mean = mean_OZmean, sd = sd_OZmean)
+print("Ozone statistics for all cities in the United States")
+list_OZ_mean_data
 ```
