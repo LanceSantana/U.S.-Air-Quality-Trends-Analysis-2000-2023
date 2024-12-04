@@ -109,3 +109,25 @@ cali_plots <- analyze_state_pollution(data = airquality_data, state_name = "Cali
 
 cali_plots
 ```
+
+```{r}
+nevada_plots <- analyze_state_pollution(data = airquality_data, state_name = "Nevada")
+
+nevada_plots
+
+ny_plots <- analyze_state_pollution(data = airquality_data, state_name = "New York")
+
+ny_plots
+
+penn_plots <- analyze_state_pollution(data = airquality_data, state_name = "Pennsylvania")
+
+penn_plots
+
+va_plots <- analyze_state_pollution(data = airquality_data, state_name = "Virginia")
+
+va_plots
+
+wis_plots <- analyze_state_pollution(data = airquality_data, state_name = "Wisconsin")
+
+wis_plots
+```
