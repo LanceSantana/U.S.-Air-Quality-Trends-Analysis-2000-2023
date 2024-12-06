@@ -3,6 +3,11 @@ Hello
 ```{r}
 library(tidyverse)
 ```
+Question: carbon monoxide in the country and pin point the cities with the lowest rates using maps(). 
+
+
+
+
 
 Question: How has the average carbon monoxide (CO) level changed yearly in Phoenix?
 Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values.
@@ -10,30 +15,42 @@ Air Quality Map by State
 
 ```{r}
 pollution<- read.csv('/Users/Gustavo/GitRStudio/pollution_2000_2023.csv')
+Pol_city<-function(x){
+  CO_plot<-data.frame(
+   index=integer(),
+   CO_M=numeric())
 
-CO_plot<-data.frame(
-  index=integer(),
-  CO_M=numeric())
 
-PH<-pollution %>%
-  filter(City %in% c('Phoenix'))%>%
-  arrange((Date))
-CO_mean_data<-numeric()
-for (i in 2000:2023){
-  PH_data<- PH %>%
-    filter(year(Date)==i)
-  CO_data<-c(mean(PH_data$CO.AQI))
-  
-  CO_plot <- rbind(CO_plot, data.frame(index = i, CO_M = CO_data))
+  PH<-pollution %>%
+    filter(City %in% c(x))%>%
+    arrange((Date))
+  CO_mean_data<-numeric()
+
+  for (i in 2000:2023){
+    PH_data<- PH %>%
+      filter(year(Date)==i)
+    CO_data<-c(mean(PH_data$CO.AQI))
+    CO_plot <- rbind(CO_plot, data.frame(index = i, CO_M = CO_data))
   }
-CO_plot
-```
-```{r}
+  
 
-ggplot (CO_plot,aes(x=index,y=CO_M))+
-  geom_line(color='black',size=1)+
-  geom_point(color='red',size=2)+
-  labs(title='Average Carbon Monoxide Air Quality Index in Phoenix from 2000-2023',
-       x="Year", y= 'Carbon Monoxide')
-            
+  ggplot (CO_plot,aes(x=index,y=CO_M))+
+    geom_line(color='black',size=1)+
+    geom_point(color='red',size=2)+
+    labs(title=paste('Average Carbon Monoxide Air Quality Index in',x,'from 2000-2023'),
+        x="Year", y= 'Carbon Monoxide')
+}            
+
+```
+
+
+```{r}
+Dallas_Pol<-Pol_city(c('Dallas'))
+Dallas_Pol
+
+LA_Pol<-Pol_city(c('Los Angeles'))
+LA_Pol
+
+Phoenix_Pol<-Pol_city(c('Phoenix'))
+Phoenix_Pol
 ```
