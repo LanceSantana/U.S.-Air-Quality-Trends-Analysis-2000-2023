@@ -1,7 +1,7 @@
 ---
 title: "AvilaIvan_STAT107_Project"
 author: "Ivan Avila"
-date: "November 26th, 2024"
+date: "December 11th, 2024"
 format: html
 editor: visual
 ---
@@ -29,6 +29,75 @@ library(maps)
 
 ```{r}
 airquality_data <- read_csv("/Users/ivana/Downloads/Stats_107R/Stats107_Project/pollution_2000_2023.csv")
+```
+
+```{r}
+#Summary Stats for NO2
+NO2_summary <- airquality_data %>%
+  summarize(
+    Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+    Median_NO2 = median(`NO2 AQI`, na.rm = TRUE),
+    Min_NO2 = min(`NO2 AQI`, na.rm = TRUE),
+    Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+    stdev_NO2 = sd(`NO2 AQI`, na.rm = TRUE),
+    Observations = n()
+  )
+
+NO2_summary
+```
+
+```{r}
+#Identifying outliers function for respective state
+identifying_outliers <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name)
+  
+  stats <- state_data %>%
+    summarise(
+      Q1 = quantile(`NO2 AQI`, 0.25, na.rm = TRUE),
+      Q3 = quantile(`NO2 AQI`, 0.75, na.rm = TRUE)
+    ) %>%
+    mutate(
+      IQR = Q3 - Q1,
+      lower_bound = Q1 - 1.5 * IQR,
+      upper_bound = Q3 + 1.5 * IQR
+    )
+  
+  outliers <- state_data %>%
+    filter(`NO2 AQI` < stats$lower_bound | `NO2 AQI` > stats$upper_bound)
+  return(outliers)
+}
+```
+
+```{r}
+#Visualization function for outliers
+visualize_outliers <- function(data, state_name) {
+  state_data <- data %>% 
+    filter(State == state_name) %>%
+    mutate(Year = year(Date))
+  
+  outliers <- identifying_outliers(data, state_name) %>%
+    mutate(Year = year(Date))
+  
+  outlier_plot <- ggplot(state_data, aes(x = factor(Year), y = `NO2 AQI`)) +
+    geom_boxplot(alpha = 0.8)+
+    geom_point(data = outliers, aes(x = factor(Year), y = `NO2 AQI`),
+               color = 'blue', size = 1)+
+    labs(
+      title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
+      x = "Year",
+      y = "NO2 AQI")
+      
+                    
+  return(outlier_plot)
+  
+}
+```
+
+```{r}
+outliers_cali <- visualize_outliers(airquality_data, "California")
+
+outliers_cali
 ```
 
 Question: Which states have the highest average levels of nitrogen dioxide (NO2) AQI?
