@@ -1,0 +1,202 @@
+---
+title: "AvilaIvan_STAT107_Project"
+author: "Ivan Avila"
+date: "December 11th, 2024"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+Packages installed
+
+```{r}
+install.packages("maps")
+install.packages("tidyverse")
+```
+
+Libraries Used
+
+```{r}
+library(tidyverse)
+
+library(maps)
+```
+
+```{r}
+airquality_data <- read_csv("/Users/ivana/Downloads/Stats_107R/Stats107_Project/pollution_2000_2023.csv")
+```
+
+```{r}
+#Summary Stats for NO2
+NO2_summary <- airquality_data %>%
+  summarize(
+    Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+    Median_NO2 = median(`NO2 AQI`, na.rm = TRUE),
+    Min_NO2 = min(`NO2 AQI`, na.rm = TRUE),
+    Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+    stdev_NO2 = sd(`NO2 AQI`, na.rm = TRUE),
+    Observations = n()
+  )
+
+NO2_summary
+```
+
+```{r}
+#Identifying outliers function for respective state
+identifying_outliers <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name)
+  
+  stats <- state_data %>%
+    summarise(
+      Q1 = quantile(`NO2 AQI`, 0.25, na.rm = TRUE),
+      Q3 = quantile(`NO2 AQI`, 0.75, na.rm = TRUE)
+    ) %>%
+    mutate(
+      IQR = Q3 - Q1,
+      lower_bound = Q1 - 1.5 * IQR,
+      upper_bound = Q3 + 1.5 * IQR
+    )
+  
+  outliers <- state_data %>%
+    filter(`NO2 AQI` < stats$lower_bound | `NO2 AQI` > stats$upper_bound)
+  return(outliers)
+}
+```
+
+```{r}
+#Visualization function for outliers
+visualize_outliers <- function(data, state_name) {
+  state_data <- data %>% 
+    filter(State == state_name) %>%
+    mutate(Year = year(Date))
+  
+  outliers <- identifying_outliers(data, state_name) %>%
+    mutate(Year = year(Date))
+  
+  outlier_plot <- ggplot(state_data, aes(x = factor(Year), y = `NO2 AQI`)) +
+    geom_boxplot(alpha = 0.8)+
+    geom_point(data = outliers, aes(x = factor(Year), y = `NO2 AQI`),
+               color = 'blue', size = 1)+
+    labs(
+      title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
+      x = "Year",
+      y = "NO2 AQI")
+      
+                    
+  return(outlier_plot)
+  
+}
+```
+
+```{r}
+outliers_cali <- visualize_outliers(airquality_data, "California")
+
+outliers_cali
+```
+
+Question: Which states have the highest average levels of nitrogen dioxide (NO2) AQI?
+
+Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
+
+```{r}
+state_avg_NO2 <- airquality_data %>%
+  group_by(State) %>%
+  summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
+  mutate(State = tolower(State))
+
+
+map_data_states <- map_data("state")
+
+avg_NO2_merged_states <- map_data_states %>%
+  left_join(state_avg_NO2, by = c("region" = "State"))
+
+ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+  geom_polygon(color = "white") +
+  scale_fill_gradient(low = "blue", high = "red") +
+  labs(title = "Average NO2 AQI by State",
+       fill = "Avg_NO2_AQI") 
+
+  
+
+```
+
+Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
+
+```{r}
+#Function filters and plots inputed city from dataset
+analyze_state_pollution <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name) %>%
+    mutate(Year = as.integer(format(as.Date(Date, format = "%Y-%m-%d"), "%Y")))
+  
+#Checks if City input is indeed in the dataset  
+  if (nrow(state_data) == 0) {
+    stop(paste("No data available for", state_name))
+  }
+  
+  state_yearly <- state_data %>%
+    group_by(Year) %>%
+    summarize(Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+              Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+              Max_O3 = max(`CO AQI`, na.rm = TRUE),
+              Max_CO = max(`O3 AQI`, na.rm = TRUE),
+              Max_SO2 = max(`SO2 AQI`, na.rm = TRUE))
+  
+  plot_mean_NO2 <- ggplot(state_yearly, aes(x = Year)) +
+    geom_line(aes(y = Mean_NO2, color = "Mean NO2"), size = 1) +
+    geom_point(aes(y = Mean_NO2, color = "Mean NO2"), size = 2) +
+    labs(title = paste("Yearly Mean NO2 Levels in", state_name),
+         x = "Year", y = "NO2 AQI",
+         color = "Legend")
+  
+  plot_max_pollutants <- ggplot(state_yearly, aes(x = Year)) +
+    geom_line(aes(y = Max_NO2, color = "Max NO2"), size = 1) +
+    geom_line(aes(y = Max_O3, color = "Max O3"), size = 1, linetype = "dashed") +
+    geom_line(aes(y = Max_CO, color = "Max CO"), size = 1, linetype = "dotted") +
+    geom_line(aes(y = Max_SO2, color = "Max SO2"), size = 1, linetype = "dotdash") +
+    labs(title = paste("Yearly Maximum Values of Pollutants in", state_name),
+         x = "Year", y = "Pollutatnt AQI",
+         color = "Pollutants") 
+  return(list(Mean_NO2_Plot = plot_mean_NO2, MAx_Pollutants_Plot = plot_max_pollutants))
+}
+```
+
+```{r}
+arizona_plots <- analyze_state_pollution(data = airquality_data, state_name = "Arizona")
+
+arizona_plots
+```
+
+```{r}
+cali_plots <- analyze_state_pollution(data = airquality_data, state_name = "California")
+
+cali_plots
+```
+
+```{r}
+nevada_plots <- analyze_state_pollution(data = airquality_data, state_name = "Nevada")
+
+nevada_plots
+
+ny_plots <- analyze_state_pollution(data = airquality_data, state_name = "New York")
+
+ny_plots
+
+penn_plots <- analyze_state_pollution(data = airquality_data, state_name = "Pennsylvania")
+
+penn_plots
+
+va_plots <- analyze_state_pollution(data = airquality_data, state_name = "Virginia")
+
+va_plots
+
+wis_plots <- analyze_state_pollution(data = airquality_data, state_name = "Wisconsin")
+
+wis_plots
+```
