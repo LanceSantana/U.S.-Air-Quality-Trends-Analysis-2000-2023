@@ -105,7 +105,13 @@ Question: Which states have the highest average levels of nitrogen dioxide (NO2)
 Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
 
 ```{r}
-state_avg_NO2 <- airquality_data %>%
+#Creates a United States Map for a respective year to compare NO2 values
+filtered_year <- airquality_data %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == 2000)
+
+
+state_avg_NO2 <- filtered_year %>%
   group_by(State) %>%
   summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
   mutate(State = tolower(State))
@@ -116,14 +122,60 @@ map_data_states <- map_data("state")
 avg_NO2_merged_states <- map_data_states %>%
   left_join(state_avg_NO2, by = c("region" = "State"))
 
+state_center <- avg_NO2_merged_states %>%
+  group_by(region) %>%
+  summarize(
+    long = mean(range(long)),
+    lat = mean(range(lat)),
+    Avg_NO2_AQI= unique(Avg_NO2_AQI)
+  ) %>%
+  filter(!is.na(Avg_NO2_AQI))
+
 ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
   geom_polygon(color = "white") +
-  scale_fill_gradient(low = "blue", high = "red") +
-  labs(title = "Average NO2 AQI by State",
+  geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
+            inherit.aes = FALSE, color = "black", size = 3) +
+  scale_fill_gradient(low = "blue", high = "red", na.value = "grey") +
+  labs(title = "Average NO2 AQI by State in 2000",
        fill = "Avg_NO2_AQI") 
 
-  
 
+```
+
+```{r}
+#Creates a United States Map for a respective year to compare NO2 values
+filtered_year <- airquality_data %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == 2023)
+
+
+state_avg_NO2 <- filtered_year %>%
+  group_by(State) %>%
+  summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
+  mutate(State = tolower(State))
+
+
+map_data_states <- map_data("state")
+
+avg_NO2_merged_states <- map_data_states %>%
+  left_join(state_avg_NO2, by = c("region" = "State"))
+
+state_center <- avg_NO2_merged_states %>%
+  group_by(region) %>%
+  summarize(
+    long = mean(range(long)),
+    lat = mean(range(lat)),
+    Avg_NO2_AQI= unique(Avg_NO2_AQI)
+  ) %>%
+  filter(!is.na(Avg_NO2_AQI))
+
+ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+  geom_polygon(color = "white") +
+  geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
+            inherit.aes = FALSE, color = "black", size = 3) +
+  scale_fill_gradient(low = "blue", high = "red", na.value = "grey") +
+  labs(title = "Average NO2 AQI by State in 2023",
+       fill = "Avg_NO2_AQI") 
 ```
 
 Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
