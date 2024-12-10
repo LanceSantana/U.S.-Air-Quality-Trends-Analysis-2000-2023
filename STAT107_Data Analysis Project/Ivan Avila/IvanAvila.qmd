@@ -106,23 +106,23 @@ Task: Create a map highlighting states by their average NO2 AQI levels to visual
 
 ```{r}
 #Creates a United States Map for a respective year to compare NO2 values
-filtered_year <- airquality_data %>%
+filtered_year_2000 <- airquality_data %>%
   mutate(Year = year(Date)) %>%
   filter(Year == 2000)
 
-
-state_avg_NO2 <- filtered_year %>%
+#creates new dataset and specifically looks for states and reorder them
+state_avg_NO2_2000 <- filtered_year_2000 %>%
   group_by(State) %>%
   summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
   mutate(State = tolower(State))
 
-
+#imports map
 map_data_states <- map_data("state")
 
-avg_NO2_merged_states <- map_data_states %>%
-  left_join(state_avg_NO2, by = c("region" = "State"))
+avg_NO2_merged_states_2000 <- map_data_states %>%
+  left_join(state_avg_NO2_2000, by = c("region" = "State"))
 
-state_center <- avg_NO2_merged_states %>%
+state_center <- avg_NO2_merged_states_2000 %>%
   group_by(region) %>%
   summarize(
     long = mean(range(long)),
@@ -131,7 +131,8 @@ state_center <- avg_NO2_merged_states %>%
   ) %>%
   filter(!is.na(Avg_NO2_AQI))
 
-ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+#creates map
+ggplot(avg_NO2_merged_states_2000, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
   geom_polygon(color = "white") +
   geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
             inherit.aes = FALSE, color = "black", size = 3) +
@@ -144,23 +145,24 @@ ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_N
 
 ```{r}
 #Creates a United States Map for a respective year to compare NO2 values
-filtered_year <- airquality_data %>%
+filtered_year_2023 <- airquality_data %>%
   mutate(Year = year(Date)) %>%
   filter(Year == 2023)
 
-
-state_avg_NO2 <- filtered_year %>%
+#creates new dataset and specifically looks for states and reorder them
+state_avg_NO2_2023 <- filtered_year_2023 %>%
   group_by(State) %>%
   summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
   mutate(State = tolower(State))
 
-
+#imports map
 map_data_states <- map_data("state")
 
-avg_NO2_merged_states <- map_data_states %>%
-  left_join(state_avg_NO2, by = c("region" = "State"))
+avg_NO2_merged_states_2023 <- map_data_states %>%
+  left_join(state_avg_NO2_2023, by = c("region" = "State"))
 
-state_center <- avg_NO2_merged_states %>%
+#Calculates the center of the states in order to plot numbers
+state_center <- avg_NO2_merged_states_2023 %>%
   group_by(region) %>%
   summarize(
     long = mean(range(long)),
@@ -169,13 +171,30 @@ state_center <- avg_NO2_merged_states %>%
   ) %>%
   filter(!is.na(Avg_NO2_AQI))
 
-ggplot(avg_NO2_merged_states, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+#creates map
+ggplot(avg_NO2_merged_states_2023, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
   geom_polygon(color = "white") +
   geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
             inherit.aes = FALSE, color = "black", size = 3) +
   scale_fill_gradient(low = "blue", high = "red", na.value = "grey") +
   labs(title = "Average NO2 AQI by State in 2023",
        fill = "Avg_NO2_AQI") 
+```
+
+```{r}
+#top 5 states within 2023
+top_5_states_2023 <- state_avg_NO2_2023 %>%
+  arrange(desc(Avg_NO2_AQI)) %>%
+  head(5)
+
+top_5_states_2023
+
+#top 5 states within 2000
+top_5_states_2000 <- state_avg_NO2_2000 %>%
+  arrange(desc(Avg_NO2_AQI)) %>%
+  head(5)
+
+top_5_states_2000
 ```
 
 Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
