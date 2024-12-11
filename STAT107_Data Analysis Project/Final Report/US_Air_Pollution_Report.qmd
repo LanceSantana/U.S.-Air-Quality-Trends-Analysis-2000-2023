@@ -8,7 +8,11 @@ editor: visual
 
 # Introduction
 
-"Which areas in the United States have shown the best and worst air quality trends for ozone, carbon monoxide, sulfur dioxide, and nitrogen dioxide , and how have these pollutants changed over time in these regions?"
+Air pollution significantly impacts public health and the environment, making it crucial to monitor trends in key pollutants such as ozone, carbon monoxide, sulfur dioxide, and nitrogen dioxide. Our project explores the question:
+
+*Which areas in the United States have shown the best and worst air quality trends for these pollutants, and how have they changed over time?*
+
+By analyzing historical data from 2000 - 2023, we aim to identify regional progress and challenges in air quality, providing insights into the effectiveness of environmental policies and the need for further action to combat pollution and understand how the situation has changed and where people can live to avoid it best.
 
 ```{r}
 library(tidyverse)
@@ -303,6 +307,7 @@ Given the limits of this analysis, factors or potential correlations cannot be r
 # Cole Hammes' Section
 
 Filter the file to only include mainland US States for mapping analysis
+
 ```{r}
 #| code-fold: true
 filtered_states <- airquality_data %>%
@@ -310,6 +315,7 @@ filtered_states <- airquality_data %>%
 ```
 
 Question 1: Over the last 23 years, which states have the highest levels of average daily sulfur pollution in the air?
+
 ```{r}
 #| code-fold: true
 sulfur_5 <- filtered_states %>%
@@ -340,9 +346,11 @@ ggplot() +
   theme_minimal() +
   labs(title = "Top 5 States by Average Sulfur Levels", x = "Longitude", y = "Latitude")
 ```
-After mapping out the states with the highest levels of sulfur dioxide pollution, we can see that New York, Pennsylvania, Kentucky, Wisconsin, and Virginia hold the highest spots. Besides New York, this makes a lot of sense because these states historically have economies that rely heavily on production and the burning of fossil fuels. In the case for New York, vast infrastruycture and a high population within New York were high contributors to sulfur pollution. 
+
+After mapping out the states with the highest levels of sulfur dioxide pollution, we can see that New York, Pennsylvania, Kentucky, Wisconsin, and Virginia hold the highest spots. Besides New York, this makes a lot of sense because these states historically have economies that rely heavily on production and the burning of fossil fuels. In the case for New York, vast infrastruycture and a high population within New York were high contributors to sulfur pollution.
 
 Question 2: How has recent climate regulation shifted the burning of high sulfur content fossil fuels across the country?
+
 ```{r}
 #| code-fold: true
 filtered_states$Date <- as.numeric(substr(filtered_states$Date, 1, 4)) 
@@ -356,7 +364,8 @@ sulfur_5New <-filtered_data%>%
   
   print(sulfur_5New)
 ```
-In this code chunk I analyzed the states with the highest daily sulfur levels over the last 5 years in the hopes of revealing the affects of new population sentiment towards coal production and the resulting shift in energy sources has affected daily sulfur dioxide levels. 
+
+In this code chunk I analyzed the states with the highest daily sulfur levels over the last 5 years in the hopes of revealing the affects of new population sentiment towards coal production and the resulting shift in energy sources has affected daily sulfur dioxide levels.
 
 ```{r}
 #| code-fold: true
@@ -376,7 +385,8 @@ ggplot() +
   theme_minimal() +
   labs(title = "Top 5 States by Average Sulfur Levels", x = "Longitude", y = "Latitude")
 ```
-As seen in the map, not only have the states with the highest levels shifted, but also, average daily sulfur dioxide levels decreased. This suggests that nationwide regulation has worked in recent years to limit, specifically, the burning of coal. The shift to renewable energy sources and natural gas has lowered the amount of sulfur in the air. 
+
+As seen in the map, not only have the states with the highest levels shifted, but also, average daily sulfur dioxide levels decreased. This suggests that nationwide regulation has worked in recent years to limit, specifically, the burning of coal. The shift to renewable energy sources and natural gas has lowered the amount of sulfur in the air.
 
 ```{r}
 #| code-fold: true
@@ -394,7 +404,8 @@ top_cities <- airquality_data %>%
 
 print(top_cities)
 ```
-This code chunk isolates the cities with the highest daily average sulfur levels to be used for later analysis. 
+
+This code chunk isolates the cities with the highest daily average sulfur levels to be used for later analysis.
 
 # Gustavo Perez's Section
 
@@ -571,6 +582,8 @@ After comparing Carbon Monoxide on a city level, it is similar to the rest of po
 
 # Ivan Avila's Section
 
+What are the statistics on nitrogen dioxide?
+
 ```{r}
 #| code-fold: true
 #Summary Stats for NO2
@@ -587,67 +600,9 @@ NO2_summary <- airquality_data %>%
 NO2_summary
 ```
 
-```{r}
-#| code-fold: true
-#Identifying outliers function for respective state
-identifying_outliers <- function(data, state_name) {
-  state_data <- data %>%
-    filter(State == state_name)
-  
-  stats <- state_data %>%
-    summarise(
-      Q1 = quantile(`NO2 AQI`, 0.25, na.rm = TRUE),
-      Q3 = quantile(`NO2 AQI`, 0.75, na.rm = TRUE)
-    ) %>%
-    mutate(
-      IQR = Q3 - Q1,
-      lower_bound = Q1 - 1.5 * IQR,
-      upper_bound = Q3 + 1.5 * IQR
-    )
-  
-  outliers <- state_data %>%
-    filter(`NO2 AQI` < stats$lower_bound | `NO2 AQI` > stats$upper_bound)
-  return(outliers)
-}
-```
+Understanding the summary statistics for the pollutant overall gives quick reference in order to compare with current trends.
 
-```{r}
-#| code-fold: true
-#Visualization function for outliers
-visualize_outliers <- function(data, state_name) {
-  state_data <- data %>% 
-    filter(State == state_name) %>%
-    mutate(Year = year(Date))
-  
-  outliers <- identifying_outliers(data, state_name) %>%
-    mutate(Year = year(Date))
-  
-  outlier_plot <- ggplot(state_data, aes(x = factor(Year), y = `NO2 AQI`)) +
-    geom_boxplot(alpha = 0.8)+
-    geom_point(data = outliers, aes(x = factor(Year), y = `NO2 AQI`),
-               color = 'blue', size = 1)+
-    labs(
-      title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
-      x = "Year",
-      y = "NO2 AQI") +
-    theme(axis.text.x = element_text(size = 7))
-      
-                    
-  return(outlier_plot)
-  
-}
-```
-
-```{r}
-#| code-fold: true
-outliers_cali <- visualize_outliers(airquality_data, "California")
-
-outliers_cali
-```
-
-Question: Which states have the highest average levels of nitrogen dioxide (NO2) AQI?
-
-Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
+Question: How has the level of NO2 pollutant changed within time across the United States? What could be the reason for this change?
 
 ```{r}
 #| code-fold: true
@@ -727,6 +682,70 @@ ggplot(avg_NO2_merged_states_2023, aes(x = long, y = lat, group = group, fill = 
        fill = "Avg_NO2_AQI") 
 ```
 
+The two visualizations of the US above show a significant reduction in NO2 AQI across all states comparing 2000 to 2023, reflecting progress in controlling pollutants and reducing emissions. States with high populations and urban sprawl, which historically faced higher NO2 levels, have seen notable improvements. This progress can be attributed to stricter environmental policies, such as the 1990 amendments to the Clean Air Act, which set tighter emission standards and promoted cleaner technologies like low-emission and zero-emission vehicles.
+
+The US maps also highlight the contrast between urban and rural areas. Urban states, with higher populations and industrial activity, consistently show higher NO2 levels. Continued efforts to reduce emissions are crucial, especially in cities where pollution has the greatest impact on residents.
+
+```{r}
+#| code-fold: true
+#Identifying outliers function for respective state
+identifying_outliers <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name)
+  
+  stats <- state_data %>%
+    summarise(
+      Q1 = quantile(`NO2 AQI`, 0.25, na.rm = TRUE),
+      Q3 = quantile(`NO2 AQI`, 0.75, na.rm = TRUE)
+    ) %>%
+    mutate(
+      IQR = Q3 - Q1,
+      lower_bound = Q1 - 1.5 * IQR,
+      upper_bound = Q3 + 1.5 * IQR
+    )
+  
+  outliers <- state_data %>%
+    filter(`NO2 AQI` < stats$lower_bound | `NO2 AQI` > stats$upper_bound)
+  return(outliers)
+}
+```
+
+```{r}
+#| code-fold: true
+#Visualization function for outliers
+visualize_outliers <- function(data, state_name) {
+  state_data <- data %>% 
+    filter(State == state_name) %>%
+    mutate(Year = year(Date))
+  
+  outliers <- identifying_outliers(data, state_name) %>%
+    mutate(Year = year(Date))
+  
+  outlier_plot <- ggplot(state_data, aes(x = factor(Year), y = `NO2 AQI`)) +
+    geom_boxplot(alpha = 0.8)+
+    geom_point(data = outliers, aes(x = factor(Year), y = `NO2 AQI`),
+               color = 'blue', size = 1)+
+    labs(
+      title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
+      x = "Year",
+      y = "NO2 AQI") +
+    theme(axis.text.x = element_text(size = 7))
+      
+                    
+  return(outlier_plot)
+  
+}
+```
+
+```{r}
+#| code-fold: true
+outliers_cali <- visualize_outliers(airquality_data, "California")
+
+outliers_cali
+```
+
+Question: What are the top 5 states with the worse pollution in the year 2000 and 2023?
+
 ```{r}
 #| code-fold: true
 #top 5 states within 2023
@@ -744,7 +763,9 @@ top_5_states_2000 <- state_avg_NO2_2000 %>%
 top_5_states_2000
 ```
 
-Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
+Gathering the top 5 states is essential to understand the difference in NO2 levels throughout the year. We can see that the top 5 states with the highest NO2 pollution in 2023, don't even surpass the 5th highest state of 2000 (New York). This shows clear progress nationally in the effort to combat this toxic pollutant.
+
+Question: How have NO2 levels changed over time in a selected State?
 
 ```{r}
 #| code-fold: true
