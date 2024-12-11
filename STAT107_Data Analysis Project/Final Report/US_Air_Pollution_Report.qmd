@@ -345,6 +345,7 @@ print(top_cities)
 
 ##GUSTAVO
 
+1: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps().
 ```{r}
 highest_City<- airquality_data %>%
   filter(year(Date)==2023)%>%
@@ -361,6 +362,8 @@ low_City<- airquality_data %>%
 head(low_City,3)
 ```
 
+
+2: How has the average carbon monoxide (CO) level changed yearly in Phoenix? Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values. Air Quality Map by State
 ```{r}
 find_city<-function(pollutant){
   
