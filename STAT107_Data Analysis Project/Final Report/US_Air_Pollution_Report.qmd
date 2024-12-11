@@ -259,8 +259,6 @@ print("Purple represents the states with a zero count greater to or equal to 10,
 ```
 
 
-
-
 #COLE
 ```{r}
 filtered_states <- airquality_data %>%
@@ -298,7 +296,7 @@ ggplot() +
 
 
 ```{r}
-filtered_states$Date <- as.numeric(sub(".*/.*/", "", filtered_states$Date)) 
+filtered_states$Date <- as.numeric(substr(filtered_states$Date, 1, 4)) 
 filtered_data <- subset(filtered_states, Date >= 2018 & Date <= 2023)
 
 sulfur_5New <-filtered_data%>%
@@ -721,5 +719,5 @@ col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Color
 col_plots
 ```
 
-Cole
+
 
