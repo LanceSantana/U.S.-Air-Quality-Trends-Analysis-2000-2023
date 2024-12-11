@@ -21,9 +21,18 @@ low_City<- pollution %>%
   summarize(M_CO=mean(CO.AQI))%>%
   arrange((M_CO))
 head(low_City,3)
+
+find_city<-function(pollutant){
+  
+  chosen_City<- pollution %>%
+    filter(year(Date)==2023)%>%
+    group_by(City)%>%
+    summarize(avg_pollutant=mean(.data[[pollutant]],na.rm = TRUE))%>%
+    arrange(desc(avg_pollutant))
+  head(chosen_City,3)
+}
+
 ```
-
-
 
 Question: How has the average carbon monoxide (CO) level changed yearly in Phoenix?
 Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values.
@@ -45,10 +54,9 @@ Pol_city<-function(x){
     PH_data<- PH %>%
       filter(year(Date)==i)
     CO_data<-c(mean(PH_data$CO.AQI,na.rm = TRUE))
+    
     CO_plot <- rbind(CO_plot, data.frame(index = i, CO_M = CO_data))
   }
-
-
   
   
   ggplot (CO_plot,aes(x=index,y=CO_M))+
@@ -61,6 +69,7 @@ Pol_city<-function(x){
 
 
 ```{r}
+
 Calexico_Pol<-Pol_city(c('Phoenix'))
 Calexico_Pol
 
@@ -69,6 +78,7 @@ LA_Pol
 
 Lompoc_Pol<-Pol_city(c('Lompoc'))
 Lompoc_Pol
+
 ```
 
 
@@ -102,4 +112,46 @@ ggplot()+
   geom_point(data=city_CH,aes(x=y,y=x),color='darkgreen',size=5,shape=18)+
   labs(title='Highest and Lowest location of Carbon Monoxide',x='Long',y='Lat')
 ```
+
+```{r}
+Pol_compare<-function(x){
+  combine_p<-data.frame(
+   index=integer(),
+   Value=numeric(),
+   Pollutant=character())
+  
+  
+  
+  PH<-pollution %>%
+    filter(City %in% c(x))%>%
+    arrange((Date))
+
+
+  for (i in 2000:2023){
+    PH_data<- PH %>%
+      filter(year(Date)==i)
+    CO_data<-c(mean(PH_data$CO.AQI,na.rm = TRUE))
+    NO2_data<-c(mean(PH_data$NO2.AQI,na.rm = TRUE))
+    SO2_data<-c(mean(PH_data$SO2.AQI,na.rm = TRUE))
+    O3_data<-c(mean(PH_data$O3.AQI,na.rm = TRUE))
+    
+    combine_p<-rbind(combine_p,data.frame(index=i,value=CO_data,Pollutant='Carbon Monoxide'))
+    combine_p<-rbind(combine_p,data.frame(index=i,value=NO2_data,Pollutant='Nitrogen Dioxide'))
+    combine_p<-rbind(combine_p,data.frame(index=i,value=SO2_data,Pollutant='Sulfur Dioxide'))
+    combine_p<-rbind(combine_p,data.frame(index=i,value=O3_data,Pollutant='Ozone'))
+  }
+  
+  
+  ggplot (combine_p,aes(x=index,y=value,color=Pollutant,group=Pollutant))+
+    geom_line()+
+    geom_point()+
+    labs(title=paste('Average Carbon Monoxide vs Pollutants Air Quality Index in',x,'from 2000-2023'),
+        x="Year", y= 'AQI Value')+
+    scale_color_manual(values=c("Carbon Monoxide"='red',"Nitrogen Dioxide"='darkgrey',"Sulfur Dioxide"='black',"Ozone"='darkgreen'))
+}
+
+test<-Pol_compare(c('Los Angeles'))
+test
+```
+
 
