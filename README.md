@@ -1,5 +1,5 @@
 Topic/Question/Problem:
-What are the best and worst areas to live in the United States based off of air pollution levels for ozone, carbon monoxide, sulfur dioxide, nitrogen dioxide? 
+"Which areas in the United States have shown the best and worst air quality trends for ozone, carbon monoxide, sulfur dioxide, and nitrogen dioxide , and how have these pollutants changed over time in these regions?"
 
 Outliers Team:
 Ivan Avila, Lance Santana, Gustavo Perez, Vole Hammes

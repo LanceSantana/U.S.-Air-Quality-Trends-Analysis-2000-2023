@@ -267,7 +267,7 @@ va_plots <- analyze_state_pollution(data = airquality_data, state_name = "Virgin
 
 va_plots
 
-wis_plots <- analyze_state_pollution(data = airquality_data, state_name = "Wisconsin")
+col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Colorado")
 
-wis_plots
+col_plots
 ```
