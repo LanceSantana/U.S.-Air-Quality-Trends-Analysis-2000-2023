@@ -16,9 +16,14 @@ airquality_data <- read_csv("pollution_2000_2023.csv")
 
 ##LANCE Reads and cleans pollution data set:
 
-```{r}
+Analysis summary:
 
-#Removes negative values from data (-1e-10 used because 0 returned values close to 0 i.e Kansas City	-0.000706)
+The initial analysis focused on extreme pollution conditions, particularly in California, due to its unexpected results, which contrasted with the high ozone levels typically expected near industrial hubs. This observation led to an investigation as to the potential effects of the quantity of ozone samples coming up as 0s.
+
+Reads and cleans pollution data set:
+
+```{r}
+#Removes negative values from data
 pollution_data <- airquality_data[airquality_data$`O3 Mean` > 0,]
 ```
 
@@ -34,6 +39,8 @@ bottom_oz_samples <- pollution_data[order(pollution_data$`O3 Mean`, decreasing =
 bottom_oz_cities <- bottom_oz_samples[1:100, c("State", "City", "O3 Mean")]
 bottom_oz_cities
 ```
+
+Notably, data points surrounding San Francisco and Los Angeles were recorded among the lower than expected ozone levels.
 
 Question #1c: Where are the highest and lowest recorded ozone levels in the United States?
 
@@ -58,6 +65,8 @@ points(oz_cities_match_bottom_oz$long, oz_cities_match_bottom_oz$lat, col = "blu
 legend("bottomright", legend = c("Highest Ozone", "Lowest Ozone"), col = c("red", "blue"), pch = c(7, 7), title = "Legend")
 title(main = "Cities by Highest and Lowest Ozone Pollution")
 ```
+
+A calculation of samples with zero ozone pollution in California’s data set revealed that almost 20% of all zero ozone samples were from California. While this suggests limited ozone pollution, potential errors in data collection may contribute to these results.
 
 Question #1d: What are some potential issues with the data that may result in skewed statistics?
 
@@ -112,6 +121,8 @@ avg_oz_states <- avg_oz_states[order(-avg_oz_states$Mean_O3),]
 bottom_3_oz_states <- avg_oz_states[1:3, c("State", "Mean_O3")]
 bottom_3_oz_states
 ```
+
+This was further evidenced by comparing the data disbursement of California and Tennessee, which has the highest average ozone. A comparison between the two bar graphs showed that California’s data is skewed to the right while still holding a lower mean than Tennessee.
 
 Question #2b:
 
@@ -200,6 +211,8 @@ cat("California's average ozone is ", higest_ozone_state$average_ozone_mean - me
 cat("California's average ozone is ", mean(cali_data$`O3 Mean`) - median(oz_mean_by_state$average_ozone_mean), " above the median\n\n")
 ```
 
+Considering that other states may be misrepresented by the frequency of zero ozone samples, a bar graph was developed to compare states with zero and only non-zero values. The graph illustrates states with a higher frequency of zero-ozone tend to have a lower average ozone concentration.
+
 Question #3b:
 
 How do average ozone levels vary across states, and how do California, Tennessee, and Alaska compare to other states and the median in terms of ozone pollution?
@@ -225,6 +238,8 @@ ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average
 #Printed summary
 print("Blue is Alaska the minumum, red is Tennessee the maximum, and purple is California. The dashed line is the median state ozone value.")
 ```
+
+Question #3c/d: Which states have the highest frequency of recorded zero values for ozone levels, and how do these states' average ozone levels compare to the average ozone levels across all states?
 
 ```{r}
 #Count the zero values recorded for each state
@@ -267,6 +282,11 @@ ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average
 #Printed summary
 print("Purple represents the states with a zero count greater to or equal to 10, while blue states represent states with less than 10 but not zero.")
 ```
+
+Conclusion:
+
+Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with outside information. With these caveats in mind, the effects of 0 ozone samples are uncertain and results show that Alaska is the best place for ozone pollution, Tennessee the worst, and California falls near average.
+
 
 ##COLE
 
