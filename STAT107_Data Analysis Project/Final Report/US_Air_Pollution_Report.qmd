@@ -222,10 +222,10 @@ cat("State with lowest average ozone level:\n", lowest_ozone_state$State, lowest
 print("California Average Ozone:")
 mean(cali_data$`O3 Mean`)
 cat("California's average ozone is ", higest_ozone_state$average_ozone_mean - mean(cali_data$`O3 Mean`), " below the highest state average\n")
-cat("California's average ozone is ", mean(cali_data$`O3 Mean`) - median(oz_mean_by_state$average_ozone_mean), " above the median\n\n")
+cat("California's average ozone is ", median(oz_mean_by_state$average_ozone_mean) - mean(cali_data$`O3 Mean`), " below the median\n\n")
 ```
 
-Considering that other states may be misrepresented by the frequency of zero ozone samples, a bar graph was developed to compare states with zero and only non-zero values. The graph illustrates states with a higher frequency of zero-ozone tend to have a lower average ozone concentration.
+Considering that other states may be misrepresented by the frequency of zero ozone samples, a bar graph was developed to compare states with zero and only non-zero values. The first graph shows the spread of ozone averages in relation to Alaska, California, and Tennessee, with the following graph illustrating the relationship between states with higher counts of zero-ozone samples and lower average ozone concentrations.
 
 Question #3b:
 
@@ -297,8 +297,6 @@ ggplot(oz_mean_by_state, aes(x = reorder(State, average_ozone_mean), y = average
 #Printed summary
 print("Purple represents the states with a zero count greater to or equal to 10, while blue states represent states with less than 10 but not zero.")
 ```
-
-Conclusion:
 
 Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with external information. With these caveats in mind, the effects of zero ozone samples are uncertain. The results show that Alaska is the best place for ozone pollution, Tennessee is the worst, and California falls near the average.
 
