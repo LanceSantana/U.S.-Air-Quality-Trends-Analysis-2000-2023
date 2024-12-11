@@ -1,11 +1,10 @@
-Hello
-
 ```{r}
 library(tidyverse)
 library(maps)
 pollution<- read.csv('/Users/Gustavo/GitRStudio/pollution_2000_2023.csv')
 ```
-Question: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps(). 
+
+Question: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps().
 
 ```{r}
 highest_City<- pollution %>%
@@ -34,9 +33,7 @@ find_city<-function(pollutant){
 
 ```
 
-Question: How has the average carbon monoxide (CO) level changed yearly in Phoenix?
-Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values.
-Air Quality Map by State
+Question: How has the average carbon monoxide (CO) level changed yearly in Phoenix? Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values. Air Quality Map by State
 
 ```{r}
 
@@ -67,7 +64,6 @@ Pol_city<-function(x){
 }            
 ```
 
-
 ```{r}
 
 Calexico_Pol<-Pol_city(c('Phoenix'))
@@ -80,8 +76,6 @@ Lompoc_Pol<-Pol_city(c('Lompoc'))
 Lompoc_Pol
 
 ```
-
-
 
 ```{r}
 data("us.cities")
@@ -102,14 +96,34 @@ CH<- us.cities%>%
   filter(name== 'Cheyenne WY')
 city_CH<- data.frame(x=CH$lat,y=CH$long)
 
+DA<- us.cities%>%
+  filter(name== 'Dallas TX')
+city_DA<- data.frame(x=DA$lat,y=DA$long)
+
+FR<- us.cities%>%
+  filter(name== 'Fresno CA')
+city_FR<- data.frame(x=FR$lat,y=FR$long)
 
 map<-map_data('state')
 ggplot()+
   geom_polygon(data=map,aes(x=long,y=lat,group=group),fill='white',color='black')+
   geom_point(data=city_LA,aes(x=y,y=x),color='red',size=3)+
+  geom_text(data=city_LA,aes(x=y,y=x,label='Los Angeles'),vjust=1)+
+          
+  geom_point(data=city_FR,aes(x=y,y=x),color='red',size=3)+
+  geom_text(data=city_FR,aes(x=y,y=x,label='Fresno'),vjust=-1)+
+            
   geom_point(data=city_LP,aes(x=y,y=x),color='darkgreen',size=5,shape=18)+
+  geom_text(data=city_LP,aes(x=y,y=x,label='Lompoc'),vjust=-1)+
+            
   geom_point(data=city_PH,aes(x=y,y=x),color='red',size=3)+
+  geom_text(data=city_PH,aes(x=y,y=x,label='Phoenix'),vjust=-1,size=3)+
+            
   geom_point(data=city_CH,aes(x=y,y=x),color='darkgreen',size=5,shape=18)+
+  geom_text(data=city_CH,aes(x=y,y=x,label='Cheyenne'),vjust=2,size=3)+  
+    
+  geom_point(data=city_DA,aes(x=y,y=x),color='darkgreen',size=5,shape=18)+
+  geom_text(data=city_DA,aes(x=y,y=x,label='Dallas'),vjust=2,size=3)+
   labs(title='Highest and Lowest location of Carbon Monoxide',x='Long',y='Lat')
 ```
 
@@ -145,7 +159,7 @@ Pol_compare<-function(x){
   ggplot (combine_p,aes(x=index,y=value,color=Pollutant,group=Pollutant))+
     geom_line()+
     geom_point()+
-    labs(title=paste('Average Carbon Monoxide vs Pollutants Air Quality Index in',x,'from 2000-2023'),
+    labs(title=paste('Average Pollutants Air Quality Index in',x,'from 2000-2023'),
         x="Year", y= 'AQI Value')+
     scale_color_manual(values=c("Carbon Monoxide"='red',"Nitrogen Dioxide"='darkgrey',"Sulfur Dioxide"='black',"Ozone"='darkgreen'))
 }
@@ -153,5 +167,3 @@ Pol_compare<-function(x){
 test<-Pol_compare(c('Los Angeles'))
 test
 ```
-
-
