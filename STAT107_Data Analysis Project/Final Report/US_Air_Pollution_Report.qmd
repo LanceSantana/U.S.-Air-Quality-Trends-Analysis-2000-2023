@@ -8,6 +8,8 @@ editor: visual
 
 # Introduction
 
+"Which areas in the United States have shown the best and worst air quality trends for ozone, carbon monoxide, sulfur dioxide, and nitrogen dioxide , and how have these pollutants changed over time in these regions?"
+
 ```{r}
 library(tidyverse)
 library(maps)
@@ -16,7 +18,7 @@ library(ggplot2)
 airquality_data <- read_csv("pollution_2000_2023.csv")
 ```
 
-# Lance Santana's Section 
+# Lance Santana's Section
 
 Reads and cleans pollution data set:
 
@@ -389,7 +391,7 @@ print(top_cities)
 
 # Gustavo Perez's Section
 
-1: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps().
+1: Measure Carbon Monoxide in the country and pin point the cities with the highest and lowest rates.
 
 ```{r}
 #| code-fold: true
@@ -408,55 +410,7 @@ low_City<- airquality_data %>%
 head(low_City,3)
 ```
 
-2: How has the average carbon monoxide (CO) level changed yearly in Phoenix? Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values. Air Quality Map by State
-
-```{r}
-#| code-fold: true
-find_city<-function(pollutant){
-  
-  chosen_City<- airquality_data %>%
-    filter(year(Date)==2023)%>%
-    group_by(City)%>%
-    summarize(avg_pollutant=mean(.data[[pollutant]],na.rm = TRUE))%>%
-    arrange(desc(avg_pollutant))
-  head(chosen_City,3)
-}
-
-Pol_city<-function(x){
-  CO_plot<-data.frame(
-   index=integer(),
-   CO_M=numeric())
-
-  PH<-airquality_data %>%
-    filter(City %in% c(x))%>%
-    arrange((Date))
-
-
-  for (i in 2000:2023){
-    PH_data<- PH %>%
-      filter(year(Date)==i)
-    CO_data<-c(mean(PH_data$`CO AQI`,na.rm = TRUE))
-    
-    CO_plot <- rbind(CO_plot, data.frame(index = i, CO_M = CO_data))
-  }
-  
-  
-  ggplot (CO_plot,aes(x=index,y=CO_M))+
-    geom_line(color='black',size=1)+
-    geom_point(color='red',size=2)+
-    labs(title=paste('Average Carbon Monoxide Air Quality Index in',x,'from 2000-2023'),
-        x="Year", y= 'Carbon Monoxide')
-} 
-
-Calexico_Pol<-Pol_city(c('Phoenix'))
-Calexico_Pol
-
-LA_Pol<-Pol_city(c('Los Angeles'))
-LA_Pol
-
-Lompoc_Pol<-Pol_city(c('Lompoc'))
-Lompoc_Pol
-```
+Filtering out cities with the highest and lowest air quality index of carbon monoxide, I was able to determine that cities such as Los Angeles, Phoenix, and Fresno have the highest levels of Carbon Monoxide in 2023. In contrast I was also able to determine the cities of Lompoc, Cheyenne, and Dallas have a significantly lower levels of Carbon Monoxide.
 
 ```{r}
 #| code-fold: true
@@ -506,8 +460,63 @@ ggplot()+
     
   geom_point(data=city_DA,aes(x=y,y=x),color='darkgreen',size=5,shape=18)+
   geom_text(data=city_DA,aes(x=y,y=x,label='Dallas'),vjust=2,size=3)+
-  labs(title='Highest and Lowest location of Carbon Monoxide',x='Long',y='Lat')
+  labs(title='Highest and Lowest location of Carbon Monoxide in 2023',x='Long',y='Lat')
 ```
+
+2: How has the average carbon monoxide (CO) level changed yearly in Phoenix, Los Angeles, and Lompoc?
+
+```{r}
+#| code-fold: true
+find_city<-function(pollutant){
+  
+  chosen_City<- airquality_data %>%
+    filter(year(Date)==2023)%>%
+    group_by(City)%>%
+    summarize(avg_pollutant=mean(.data[[pollutant]],na.rm = TRUE))%>%
+    arrange(desc(avg_pollutant))
+  head(chosen_City,3)
+}
+
+Pol_city<-function(x){
+  CO_plot<-data.frame(
+   index=integer(),
+   CO_M=numeric())
+
+  PH<-airquality_data %>%
+    filter(City %in% c(x))%>%
+    arrange((Date))
+
+
+  for (i in 2000:2023){
+    PH_data<- PH %>%
+      filter(year(Date)==i)
+    CO_data<-c(mean(PH_data$`CO AQI`,na.rm = TRUE))
+    
+    CO_plot <- rbind(CO_plot, data.frame(index = i, CO_M = CO_data))
+  }
+  
+  
+  ggplot (CO_plot,aes(x=index,y=CO_M))+
+    geom_line(color='black',linewidth=1)+
+    geom_point(color='red',size=2)+
+    labs(title=paste('Average Carbon Monoxide Air Quality Index in',x,'from 2000-2023'),
+        x="Year", y= 'Carbon Monoxide')
+} 
+
+Calexico_Pol<-Pol_city(c('Phoenix'))
+Calexico_Pol
+
+LA_Pol<-Pol_city(c('Los Angeles'))
+LA_Pol
+
+Lompoc_Pol<-Pol_city(c('Lompoc'))
+Lompoc_Pol
+
+```
+
+After measuring how Carbon Monoxide has changed over 23 years, I found a similar trend of CO levels decreasing steadily. In the cities with the highest average, there is an exponential drop the first 5 years and has continued to drop steadily. Lompoc, having the lowest average, began already at a low average yet has still experienced an overall drop while having larger spikes of increased and decreased levels throughout the year. Regardless of what level they started, overall all locations are decreasing in Carbon Monoxide.
+
+3.  How does Carbon Monoxide compare to other pollutants?
 
 ```{r}
 #| code-fold: true
@@ -550,6 +559,8 @@ Pol_compare<-function(x){
 Pollutants_avg<-Pol_compare(c('Los Angeles'))
 Pollutants_avg
 ```
+
+After comparing Carbon Monoxide on a city level, it is similar to the rest of pollutant of decreasing steadily throughout the years. In Los Angeles, they're reaching a steady pace and Carbon Monoxide has the most similar trend with Sulfur Dioxide.
 
 # Ivan Avila's Section
 
