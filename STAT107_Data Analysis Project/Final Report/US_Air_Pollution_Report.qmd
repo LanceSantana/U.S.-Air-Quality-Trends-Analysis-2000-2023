@@ -11,7 +11,9 @@ library(tidyverse)
 library(maps)
 airquality_data <- read_csv("pollution_2000_2023.csv")
 ```
-GUSTAVO
+
+##GUSTAVO
+
 ```{r}
 highest_City<- airquality_data %>%
   filter(year(Date)==2023)%>%
@@ -27,6 +29,7 @@ low_City<- airquality_data %>%
   arrange((M_CO))
 head(low_City,3)
 ```
+
 ```{r}
 find_city<-function(pollutant){
   
@@ -73,6 +76,7 @@ LA_Pol
 Lompoc_Pol<-Pol_city(c('Lompoc'))
 Lompoc_Pol
 ```
+
 ```{r}
 data("us.cities")
 HI<-us.cities
@@ -162,4 +166,225 @@ Pol_compare<-function(x){
 
 Pollutants_avg<-Pol_compare(c('Los Angeles'))
 Pollutants_avg
+```
+
+##IVAN
+
+```{r}
+#Summary Stats for NO2
+NO2_summary <- airquality_data %>%
+  summarize(
+    Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+    Median_NO2 = median(`NO2 AQI`, na.rm = TRUE),
+    Min_NO2 = min(`NO2 AQI`, na.rm = TRUE),
+    Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+    stdev_NO2 = sd(`NO2 AQI`, na.rm = TRUE),
+    Observations = n()
+  )
+
+NO2_summary
+```
+
+```{r}
+#Identifying outliers function for respective state
+identifying_outliers <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name)
+  
+  stats <- state_data %>%
+    summarise(
+      Q1 = quantile(`NO2 AQI`, 0.25, na.rm = TRUE),
+      Q3 = quantile(`NO2 AQI`, 0.75, na.rm = TRUE)
+    ) %>%
+    mutate(
+      IQR = Q3 - Q1,
+      lower_bound = Q1 - 1.5 * IQR,
+      upper_bound = Q3 + 1.5 * IQR
+    )
+  
+  outliers <- state_data %>%
+    filter(`NO2 AQI` < stats$lower_bound | `NO2 AQI` > stats$upper_bound)
+  return(outliers)
+}
+```
+
+```{r}
+
+#Visualization function for outliers
+visualize_outliers <- function(data, state_name) {
+  state_data <- data %>% 
+    filter(State == state_name) %>%
+    mutate(Year = year(Date))
+  
+  outliers <- identifying_outliers(data, state_name) %>%
+    mutate(Year = year(Date))
+  
+  outlier_plot <- ggplot(state_data, aes(x = factor(Year), y = `NO2 AQI`)) +
+    geom_boxplot(alpha = 0.8)+
+    geom_point(data = outliers, aes(x = factor(Year), y = `NO2 AQI`),
+               color = 'blue', size = 1)+
+    labs(
+      title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
+      x = "Year",
+      y = "NO2 AQI")
+      
+                    
+  return(outlier_plot)
+  
+}
+```
+
+```{r}
+outliers_cali <- visualize_outliers(airquality_data, "California")
+
+outliers_cali
+```
+
+Question: Which states have the highest average levels of nitrogen dioxide (NO2) AQI?
+
+Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
+
+```{r}
+#Creates a United States Map for a respective year to compare NO2 values
+filtered_year_2000 <- airquality_data %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == 2000)
+
+#creates new dataset and specifically looks for states and reorder them
+state_avg_NO2_2000 <- filtered_year_2000 %>%
+  group_by(State) %>%
+  summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
+  mutate(State = tolower(State))
+
+#imports map
+map_data_states <- map_data("state")
+
+avg_NO2_merged_states_2000 <- map_data_states %>%
+  left_join(state_avg_NO2_2000, by = c("region" = "State"))
+
+state_center <- avg_NO2_merged_states_2000 %>%
+  group_by(region) %>%
+  summarize(
+    long = mean(range(long)),
+    lat = mean(range(lat)),
+    Avg_NO2_AQI= unique(Avg_NO2_AQI)
+  ) %>%
+  filter(!is.na(Avg_NO2_AQI))
+
+#creates map
+ggplot(avg_NO2_merged_states_2000, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+  geom_polygon(color = "white") +
+  geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
+            inherit.aes = FALSE, color = "black", size = 3) +
+  scale_fill_gradient(low = "blue", high = "red", na.value = "grey") +
+  labs(title = "Average NO2 AQI by State in 2000",
+       fill = "Avg_NO2_AQI") 
+
+```
+
+```{r}
+#Creates a United States Map for a respective year to compare NO2 values
+filtered_year_2023 <- airquality_data %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == 2023)
+
+#creates new dataset and specifically looks for states and reorder them
+state_avg_NO2_2023 <- filtered_year_2023 %>%
+  group_by(State) %>%
+  summarize(Avg_NO2_AQI = mean(`NO2 AQI`, na.rm = TRUE)) %>%
+  mutate(State = tolower(State))
+
+#imports map
+map_data_states <- map_data("state")
+
+avg_NO2_merged_states_2023 <- map_data_states %>%
+  left_join(state_avg_NO2_2023, by = c("region" = "State"))
+
+#Calculates the center of the states in order to plot numbers
+state_center <- avg_NO2_merged_states_2023 %>%
+  group_by(region) %>%
+  summarize(
+    long = mean(range(long)),
+    lat = mean(range(lat)),
+    Avg_NO2_AQI= unique(Avg_NO2_AQI)
+  ) %>%
+  filter(!is.na(Avg_NO2_AQI))
+
+#creates map
+ggplot(avg_NO2_merged_states_2023, aes(x = long, y = lat, group = group, fill = Avg_NO2_AQI)) +
+  geom_polygon(color = "white") +
+  geom_text(data = state_center, aes(x = long, y = lat, label = round(Avg_NO2_AQI, 1)),
+            inherit.aes = FALSE, color = "black", size = 3) +
+  scale_fill_gradient(low = "blue", high = "red", na.value = "grey") +
+  labs(title = "Average NO2 AQI by State in 2023",
+       fill = "Avg_NO2_AQI") 
+```
+
+```{r}
+#top 5 states within 2023
+top_5_states_2023 <- state_avg_NO2_2023 %>%
+  arrange(desc(Avg_NO2_AQI)) %>%
+  head(5)
+
+top_5_states_2023
+
+#top 5 states within 2000
+top_5_states_2000 <- state_avg_NO2_2000 %>%
+  arrange(desc(Avg_NO2_AQI)) %>%
+  head(5)
+
+top_5_states_2000
+```
+
+Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
+
+```{r}
+#Function filters and plots inputed city from dataset
+analyze_state_pollution <- function(data, state_name) {
+  state_data <- data %>%
+    filter(State == state_name) %>%
+    mutate(Year = as.integer(format(as.Date(Date, format = "%Y-%m-%d"), "%Y")))
+  
+#Checks if City input is indeed in the dataset  
+  if (nrow(state_data) == 0) {
+    stop(paste("No data available for", state_name))
+  }
+  
+  state_yearly <- state_data %>%
+    group_by(Year) %>%
+    summarize(Mean_NO2 = mean(`NO2 AQI`, na.rm = TRUE),
+              Max_NO2 = max(`NO2 AQI`, na.rm = TRUE),
+              Max_O3 = max(`CO AQI`, na.rm = TRUE),
+              Max_CO = max(`O3 AQI`, na.rm = TRUE),
+              Max_SO2 = max(`SO2 AQI`, na.rm = TRUE))
+  
+  plot_mean_NO2 <- ggplot(state_yearly, aes(x = Year)) +
+    geom_line(aes(y = Mean_NO2, color = "Mean NO2"), size = 1) +
+    geom_point(aes(y = Mean_NO2, color = "Mean NO2"), size = 2) +
+    labs(title = paste("Yearly Mean NO2 Levels in", state_name),
+         x = "Year", y = "NO2 AQI",
+         color = "Legend")
+  
+  plot_max_pollutants <- ggplot(state_yearly, aes(x = Year)) +
+    geom_line(aes(y = Max_NO2, color = "Max NO2"), size = 1) +
+    geom_line(aes(y = Max_O3, color = "Max O3"), size = 1, linetype = "dashed") +
+    geom_line(aes(y = Max_CO, color = "Max CO"), size = 1, linetype = "dotted") +
+    geom_line(aes(y = Max_SO2, color = "Max SO2"), size = 1, linetype = "dotdash") +
+    labs(title = paste("Yearly Maximum Values of Pollutants in", state_name),
+         x = "Year", y = "Pollutatnt AQI",
+         color = "Pollutants") 
+  return(list(Mean_NO2_Plot = plot_mean_NO2, MAx_Pollutants_Plot = plot_max_pollutants))
+}
+```
+
+```{r}
+cali_plots <- analyze_state_pollution(data = airquality_data, state_name = "California")
+
+cali_plots
+```
+
+```{r}
+col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Colorado")
+
+col_plots
 ```
