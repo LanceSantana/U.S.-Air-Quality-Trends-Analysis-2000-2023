@@ -127,7 +127,6 @@ ggplot()+
   labs(title='Highest and Lowest location of Carbon Monoxide',x='Long',y='Lat')
 ```
 
-
 ```{r}
 Pol_compare<-function(x){
   combine_p<-data.frame(
