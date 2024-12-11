@@ -302,12 +302,14 @@ Given the limits of this analysis, factors or potential correlations cannot be r
 
 # Cole Hammes' Section
 
+Filter the file to only include mainland US States for mapping analysis
 ```{r}
 #| code-fold: true
 filtered_states <- airquality_data %>%
   filter(!State %in% c("Alaska", "Hawaii", "District Of Columbia"))
 ```
 
+Question 1: Over the last 23 years, which states have the highest levels of average daily sulfur pollution in the air?
 ```{r}
 #| code-fold: true
 sulfur_5 <- filtered_states %>%
@@ -338,7 +340,9 @@ ggplot() +
   theme_minimal() +
   labs(title = "Top 5 States by Average Sulfur Levels", x = "Longitude", y = "Latitude")
 ```
+After mapping out the states with the highest levels of sulfur dioxide pollution, we can see that New York, Pennsylvania, Kentucky, Wisconsin, and Virginia hold the highest spots. Besides New York, this makes a lot of sense because these states historically have economies that rely heavily on production and the burning of fossil fuels. In the case for New York, vast infrastruycture and a high population within New York were high contributors to sulfur pollution. 
 
+Question 2: How has recent climate regulation shifted the burning of high sulfur content fossil fuels across the country?
 ```{r}
 #| code-fold: true
 filtered_states$Date <- as.numeric(substr(filtered_states$Date, 1, 4)) 
@@ -352,6 +356,7 @@ sulfur_5New <-filtered_data%>%
   
   print(sulfur_5New)
 ```
+In this code chunk I analyzed the states with the highest daily sulfur levels over the last 5 years in the hopes of revealing the affects of new population sentiment towards coal production and the resulting shift in energy sources has affected daily sulfur dioxide levels. 
 
 ```{r}
 #| code-fold: true
@@ -371,6 +376,7 @@ ggplot() +
   theme_minimal() +
   labs(title = "Top 5 States by Average Sulfur Levels", x = "Longitude", y = "Latitude")
 ```
+As seen in the map, not only have the states with the highest levels shifted, but also, average daily sulfur dioxide levels decreased. This suggests that nationwide regulation has worked in recent years to limit, specifically, the burning of coal. The shift to renewable energy sources and natural gas has lowered the amount of sulfur in the air. 
 
 ```{r}
 #| code-fold: true
@@ -388,6 +394,7 @@ top_cities <- airquality_data %>%
 
 print(top_cities)
 ```
+This code chunk isolates the cities with the highest daily average sulfur levels to be used for later analysis. 
 
 # Gustavo Perez's Section
 
