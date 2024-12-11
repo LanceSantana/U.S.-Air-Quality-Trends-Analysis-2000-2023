@@ -30,6 +30,7 @@ pollution_data <- airquality_data[airquality_data$`O3 Mean` > 0,]
 Question #1a/b: Which cities have the highest & lowest recorded ozone pollution levels?
 
 ```{r}
+#| code-fold: true
 #Sorts highest & lowest 100 ozone samples into a data frame
 top_oz_samples <- pollution_data[order(pollution_data$`O3 Mean`, decreasing = TRUE),]
 top_oz_cities <- top_oz_samples[1:100, c("State", "City", "O3 Mean")]
@@ -45,6 +46,7 @@ Notably, data points surrounding San Francisco and Los Angeles were recorded amo
 Question #1c: Where are the highest and lowest recorded ozone levels in the United States?
 
 ```{r}
+#| code-fold: true
 #Creates us.cities, needed for mapping, contains city coordinators
 data("us.cities")
 us_cities <- us.cities
@@ -71,6 +73,7 @@ A calculation of samples with zero ozone pollution in California’s data set re
 Question #1d: What are some potential issues with the data that may result in skewed statistics?
 
 ```{r}
+#| code-fold: true
 #Potential Issues:
 # 1. us.cities does not have all the cities listed in our data set
 
@@ -99,6 +102,7 @@ Question #2a:
 What are the states that have the highest and lowest average ozone levels?
 
 ```{r}
+#| code-fold: true
 #Finds state average ozone
 avg_oz_states <- data.frame(State = unique(pollution_data$State), Mean_03 = NA)
 for (i in 1:nrow(avg_oz_states)){
@@ -129,6 +133,7 @@ Question #2b:
 What does the distribution of ozone data look like for California compared to the highest and lowest ozone states?
 
 ```{r}
+#| code-fold: true
 #Collects data for Tennessee
 tenne_data <- pollution_data %>%
   filter(State == "Tennessee")
@@ -177,6 +182,7 @@ Question #3a:
 What is the average ozone air pollution for California compared to the highest and lowest ozone states?
 
 ```{r}
+#| code-fold: true
 #Preparing mean state ozone data by grouping and ordering
 oz_mean_by_state <- pollution_data %>%
   group_by(State) %>%
@@ -218,7 +224,7 @@ Question #3b:
 How do average ozone levels vary across states, and how do California, Tennessee, and Alaska compare to other states and the median in terms of ozone pollution?
 
 ```{r}
-
+#| code-fold: true
 #Adding color to select states
 oz_mean_by_state$fill_color <- "gray"
 oz_mean_by_state$fill_color[oz_mean_by_state$State == "California"] <- "purple"
@@ -242,6 +248,7 @@ print("Blue is Alaska the minumum, red is Tennessee the maximum, and purple is C
 Question #3c/d: Which states have the highest frequency of recorded zero values for ozone levels, and how do these states' average ozone levels compare to the average ozone levels across all states?
 
 ```{r}
+#| code-fold: true
 #Count the zero values recorded for each state
 state_zero_count <- airquality_data %>%
   filter(`O3 Mean` == 0) %>%
@@ -290,11 +297,13 @@ Given the limits of this analysis, factors or potential correlations cannot be r
 ##COLE
 
 ```{r}
+#| code-fold: true
 filtered_states <- airquality_data %>%
   filter(!State %in% c("Alaska", "Hawaii", "District Of Columbia"))
 ```
 
 ```{r}
+#| code-fold: true
 sulfur_5 <- filtered_states %>%
   group_by(State) %>%
   summarize(average_sulfur = mean(`SO2 Mean`, na.rm = TRUE)) %>%
@@ -306,6 +315,7 @@ print(sulfur_5)
 ```
 
 ```{r}
+#| code-fold: true
 us_states <- map_data("state") 
 sulfur_5 <- sulfur_5 %>%
   mutate(state = tolower(State))  
@@ -324,6 +334,7 @@ ggplot() +
 ```
 
 ```{r}
+#| code-fold: true
 filtered_states$Date <- as.numeric(substr(filtered_states$Date, 1, 4)) 
 filtered_data <- subset(filtered_states, Date >= 2018 & Date <= 2023)
 
@@ -337,6 +348,7 @@ sulfur_5New <-filtered_data%>%
 ```
 
 ```{r}
+#| code-fold: true
 us_states <- map_data("state") 
 sulfur_5New <- sulfur_5New %>%
   mutate(state = tolower(State))  
@@ -355,6 +367,7 @@ ggplot() +
 ```
 
 ```{r}
+#| code-fold: true
 top_5 <- c("New York", "Kentucky", "Pennsylvania", "Wisconsin", "Virginia")
 
 top_cities <- airquality_data %>%
@@ -375,6 +388,7 @@ print(top_cities)
 1: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps().
 
 ```{r}
+#| code-fold: true
 highest_City<- airquality_data %>%
   filter(year(Date)==2023)%>%
   group_by(City)%>%
@@ -393,6 +407,7 @@ head(low_City,3)
 2: How has the average carbon monoxide (CO) level changed yearly in Phoenix? Task: Filter the dataset for Phoenix and plot the yearly average of CO Mean values. Air Quality Map by State
 
 ```{r}
+#| code-fold: true
 find_city<-function(pollutant){
   
   chosen_City<- airquality_data %>%
@@ -440,6 +455,7 @@ Lompoc_Pol
 ```
 
 ```{r}
+#| code-fold: true
 data("us.cities")
 HI<-us.cities
 LA<- us.cities%>%
@@ -490,6 +506,7 @@ ggplot()+
 ```
 
 ```{r}
+#| code-fold: true
 Pol_compare<-function(x){
   combine_p<-data.frame(
    index=integer(),
@@ -533,6 +550,7 @@ Pollutants_avg
 ##IVAN
 
 ```{r}
+#| code-fold: true
 #Summary Stats for NO2
 NO2_summary <- airquality_data %>%
   summarize(
@@ -548,6 +566,7 @@ NO2_summary
 ```
 
 ```{r}
+#| code-fold: true
 #Identifying outliers function for respective state
 identifying_outliers <- function(data, state_name) {
   state_data <- data %>%
@@ -571,7 +590,7 @@ identifying_outliers <- function(data, state_name) {
 ```
 
 ```{r}
-
+#| code-fold: true
 #Visualization function for outliers
 visualize_outliers <- function(data, state_name) {
   state_data <- data %>% 
@@ -588,7 +607,8 @@ visualize_outliers <- function(data, state_name) {
     labs(
       title = paste("Outliers in NO2 AQI for", state_name, "by Year"),
       x = "Year",
-      y = "NO2 AQI")
+      y = "NO2 AQI") +
+    theme(axis.text.x = element_text(size = 7))
       
                     
   return(outlier_plot)
@@ -597,6 +617,7 @@ visualize_outliers <- function(data, state_name) {
 ```
 
 ```{r}
+#| code-fold: true
 outliers_cali <- visualize_outliers(airquality_data, "California")
 
 outliers_cali
@@ -607,6 +628,7 @@ Question: Which states have the highest average levels of nitrogen dioxide (NO2)
 Task: Create a map highlighting states by their average NO2 AQI levels to visualize geographical patterns in pollution.
 
 ```{r}
+#| code-fold: true
 #Creates a United States Map for a respective year to compare NO2 values
 filtered_year_2000 <- airquality_data %>%
   mutate(Year = year(Date)) %>%
@@ -645,6 +667,7 @@ ggplot(avg_NO2_merged_states_2000, aes(x = long, y = lat, group = group, fill = 
 ```
 
 ```{r}
+#| code-fold: true
 #Creates a United States Map for a respective year to compare NO2 values
 filtered_year_2023 <- airquality_data %>%
   mutate(Year = year(Date)) %>%
@@ -683,6 +706,7 @@ ggplot(avg_NO2_merged_states_2023, aes(x = long, y = lat, group = group, fill = 
 ```
 
 ```{r}
+#| code-fold: true
 #top 5 states within 2023
 top_5_states_2023 <- state_avg_NO2_2023 %>%
   arrange(desc(Avg_NO2_AQI)) %>%
@@ -701,6 +725,7 @@ top_5_states_2000
 Question: How have NO2 levels changed over time in a selected State? Task: Filter for a specific State and plot a line chart of NO2 Mean by year. Comparing Max Values of Pollutants
 
 ```{r}
+#| code-fold: true
 #Function filters and plots inputed city from dataset
 analyze_state_pollution <- function(data, state_name) {
   state_data <- data %>%
@@ -740,12 +765,14 @@ analyze_state_pollution <- function(data, state_name) {
 ```
 
 ```{r}
+#| code-fold: true
 cali_plots <- analyze_state_pollution(data = airquality_data, state_name = "California")
 
 cali_plots
 ```
 
 ```{r}
+#| code-fold: true
 col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Colorado")
 
 col_plots
