@@ -1,7 +1,7 @@
 ---
 title: "US Air Pollution Report"
 author: "Ivan Avila, Lance Santana, Cole Hammes, Gustavo Perez"
-date: "December 11th, 2024"
+date: "12-11-24"
 format: html
 editor: visual
 ---
@@ -286,7 +286,6 @@ print("Purple represents the states with a zero count greater to or equal to 10,
 Conclusion:
 
 Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with outside information. With these caveats in mind, the effects of 0 ozone samples are uncertain and results show that Alaska is the best place for ozone pollution, Tennessee the worst, and California falls near average.
-
 
 ##COLE
 
