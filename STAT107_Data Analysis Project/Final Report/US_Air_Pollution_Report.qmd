@@ -159,6 +159,12 @@ Question #3a:
 
 What is the average ozone air pollution for California compared to the highest and lowest ozone states?
 ```{r}
+#Preparing mean state ozone data by grouping and ordering
+oz_mean_by_state <- pollution_data %>%
+  group_by(State) %>%
+  summarize(average_ozone_mean = mean(`O3 Mean`, na.rm = TRUE)) %>%
+  arrange(desc(average_ozone_mean))
+
 #Calculate highest, lowest average state ozone and median average value
 highest_ozone_state_value <- max(oz_mean_by_state$average_ozone_mean)
 lowest_ozone_state_value <- min(oz_mean_by_state$average_ozone_mean)
@@ -191,11 +197,6 @@ Question #3b:
 How do average ozone levels vary across states, and how do California, Tennessee, and Alaska compare to other states and the median in terms of ozone pollution?
 
 ```{r}
-#Preparing mean state ozone data by grouping and ordering
-oz_mean_by_state <- pollution_data %>%
-  group_by(State) %>%
-  summarize(average_ozone_mean = mean(`O3 Mean`, na.rm = TRUE)) %>%
-  arrange(desc(average_ozone_mean))
 
 #Adding color to select states
 oz_mean_by_state$fill_color <- "gray"
