@@ -333,7 +333,7 @@ top_5 <- c("New York", "Kentucky", "Pennsylvania", "Wisconsin", "Virginia")
 top_cities <- airquality_data %>%
   filter(State %in% top_5) %>%           
   group_by(State, City) %>%                    
-  summarize(city_sulf = mean(SO2.Mean),
+  summarize(city_sulf = mean(`SO2 Mean`),
             .groups = "drop") %>%
   arrange(State, desc(city_sulf)) %>%          
   group_by(State) %>%                          
