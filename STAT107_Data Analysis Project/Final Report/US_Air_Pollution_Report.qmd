@@ -6,6 +6,8 @@ format: html
 editor: visual
 ---
 
+# Introduction
+
 ```{r}
 library(tidyverse)
 library(maps)
@@ -14,7 +16,9 @@ library(ggplot2)
 airquality_data <- read_csv("pollution_2000_2023.csv")
 ```
 
-##LANCE Reads and cleans pollution data set:
+# Lance Santana's Section 
+
+Reads and cleans pollution data set:
 
 Analysis summary:
 
@@ -294,7 +298,7 @@ Conclusion:
 
 Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with outside information. With these caveats in mind, the effects of 0 ozone samples are uncertain and results show that Alaska is the best place for ozone pollution, Tennessee the worst, and California falls near average.
 
-##COLE
+# Cole Hammes' Section
 
 ```{r}
 #| code-fold: true
@@ -383,7 +387,7 @@ top_cities <- airquality_data %>%
 print(top_cities)
 ```
 
-##GUSTAVO
+# Gustavo Perez's Section
 
 1: carbon monoxide in the country and pin point the cities with the highest and lowesr rates using maps().
 
@@ -547,7 +551,7 @@ Pollutants_avg<-Pol_compare(c('Los Angeles'))
 Pollutants_avg
 ```
 
-##IVAN
+# Ivan Avila's Section
 
 ```{r}
 #| code-fold: true
@@ -777,3 +781,5 @@ col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Color
 
 col_plots
 ```
+
+# Project Conclusion
