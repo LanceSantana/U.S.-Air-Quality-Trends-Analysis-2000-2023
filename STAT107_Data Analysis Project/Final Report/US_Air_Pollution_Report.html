@@ -156,13 +156,12 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </section>
 <section id="lance-santanas-section" class="level1">
 <h1>Lance Santana’s Section</h1>
-<p>Reads and cleans pollution data set:</p>
-<p>Analysis summary:</p>
-<p>The initial analysis focused on extreme pollution conditions, particularly in California, due to its unexpected results, which contrasted with the high ozone levels typically expected near industrial hubs. This observation led to an investigation as to the potential effects of the quantity of ozone samples coming up as 0s.</p>
+<p>Ozone Analysis:</p>
+<p>The initial analysis centered on extreme pollution conditions, particularly in California, due to its unexpected results which contrasted with the high ozone levels typically associated with industrial hubs. This prompted an investigation into the potential impact of the significant number of ozone samples recorded as zeros.</p>
 <p>Reads and cleans pollution data set:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Removes negative values from data</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pollution_data <span class="ot">&lt;-</span> airquality_data[airquality_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pollution_data <span class="ot">&lt;-</span> airquality_data[airquality_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span> <span class="sc">&gt;=</span> <span class="dv">0</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Question #1a/b: Which cities have the highest &amp; lowest recorded ozone pollution levels?</p>
 <div class="cell">
@@ -197,22 +196,22 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 100 × 3
-   State          City              `O3 Mean`
-   &lt;chr&gt;          &lt;chr&gt;                 &lt;dbl&gt;
- 1 Colorado       Welby              0.000059
- 2 California     Vallejo            0.000059
- 3 Arkansas       North Little Rock  0.000059
- 4 Connecticut    New Haven          0.000059
- 5 California     San Jose           0.000083
- 6 Virginia       Vinton             0.000111
- 7 California     Not in a city      0.000118
- 8 New York       New York           0.000118
- 9 New York       New York           0.000118
-10 North Carolina Charlotte          0.000118
+   State        City         `O3 Mean`
+   &lt;chr&gt;        &lt;chr&gt;            &lt;dbl&gt;
+ 1 California   Burbank              0
+ 2 California   Arden-Arcade         0
+ 3 California   Arden-Arcade         0
+ 4 California   Arden-Arcade         0
+ 5 Colorado     Welby                0
+ 6 Colorado     Welby                0
+ 7 Missouri     Ferguson             0
+ 8 Missouri     St. Louis            0
+ 9 Pennsylvania Pittsburgh           0
+10 Pennsylvania Beaver Falls         0
 # ℹ 90 more rows</code></pre>
 </div>
 </div>
-<p>Notably, data points surrounding San Francisco and Los Angeles were recorded among the lower than expected ozone levels.</p>
+<p>Notably, measured ozone levels surrounding San Francisco and Los Angeles were recorded as lower than expected, as shown in the following graphic.</p>
 <p>Question #1c: Where are the highest and lowest recorded ozone levels in the United States?</p>
 <div class="cell">
 <details class="code-fold">
@@ -245,7 +244,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </div>
 </div>
 </div>
-<p>A calculation of samples with zero ozone pollution in California’s data set revealed that almost 20% of all zero ozone samples were from California. While this suggests limited ozone pollution, potential errors in data collection may contribute to these results.</p>
+<p>A calculation of samples with zero ozone pollution in California’s data set revealed California accounted for almost 20% of all zero ozone samples in the data set. While this findings suggest limited ozone pollution in these areas, potential errors in data collection may have contributed to these results.</p>
 <p>Question #1d: What are some potential issues with the data that may result in skewed statistics?</p>
 <div class="cell">
 <details class="code-fold">
@@ -313,9 +312,9 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>        State    Mean_O3
-46     Alaska 0.01556845
-32     Oregon 0.02186855
-20 Washington 0.02191782</code></pre>
+46     Alaska 0.01528091
+32     Oregon 0.02183142
+20 Washington 0.02190443</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -330,7 +329,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <pre><code>        State    Mean_O3
 25  Tennessee 0.03908276
 33    Wyoming 0.03887681
-41 New Mexico 0.03565797</code></pre>
+41 New Mexico 0.03564987</code></pre>
 </div>
 </div>
 <p>This was further evidenced by comparing the data disbursement of California and Tennessee, which has the highest average ozone. A comparison between the two bar graphs showed that California’s data is skewed to the right while still holding a lower mean than Tennessee.</p>
@@ -408,7 +407,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </div>
 </div>
 <p>Question #3a:</p>
-<p>What is the average ozone air pollution for California compared to the highest and lowest ozone states?</p>
+<p>How does the average ozone air pollution for California compare to the median as well as the highest and lowest ozone states?</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -434,7 +433,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Median State Ozone:"</span>, <span class="fu">median</span>(oz_mean_by_state<span class="sc">$</span>average_ozone_mean),<span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Median State Ozone: 0.02874424 </code></pre>
+<pre><code>Median State Ozone: 0.02872695 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -452,7 +451,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>State with lowest average ozone level:
- Alaska 0.01556845 </code></pre>
+ Alaska 0.01528091 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -467,24 +466,24 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(cali_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.02839114</code></pre>
+<pre><code>[1] 0.02838408</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"California's average ozone is "</span>, higest_ozone_state<span class="sc">$</span>average_ozone_mean <span class="sc">-</span> <span class="fu">mean</span>(cali_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span>), <span class="st">" below the highest state average</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>California's average ozone is  0.01069162  below the highest state average</code></pre>
+<pre><code>California's average ozone is  0.01069868  below the highest state average</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"California's average ozone is "</span>, <span class="fu">mean</span>(cali_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span>) <span class="sc">-</span> <span class="fu">median</span>(oz_mean_by_state<span class="sc">$</span>average_ozone_mean), <span class="st">" above the median</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"California's average ozone is "</span>, <span class="fu">median</span>(oz_mean_by_state<span class="sc">$</span>average_ozone_mean) <span class="sc">-</span> <span class="fu">mean</span>(cali_data<span class="sc">$</span><span class="st">`</span><span class="at">O3 Mean</span><span class="st">`</span>), <span class="st">" below the median</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>California's average ozone is  -0.0003531006  above the median</code></pre>
+<pre><code>California's average ozone is  0.0003428702  below the median</code></pre>
 </div>
 </div>
-<p>Considering that other states may be misrepresented by the frequency of zero ozone samples, a bar graph was developed to compare states with zero and only non-zero values. The graph illustrates states with a higher frequency of zero-ozone tend to have a lower average ozone concentration.</p>
+<p>Considering that other states may be misrepresented by the frequency of zero ozone samples, a bar graph was developed to compare states with zero and only non-zero values. The first graph shows the spread of ozone averages in relation to Alaska, California, and Tennessee, with the following graph illustrating the relationship between states with higher counts of zero-ozone samples and lower average ozone concentrations.</p>
 <p>Question #3b:</p>
 <p>How do average ozone levels vary across states, and how do California, Tennessee, and Alaska compare to other states and the median in terms of ozone pollution?</p>
 <div class="cell">
@@ -597,8 +596,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <pre><code>[1] "Purple represents the states with a zero count greater to or equal to 10, while blue states represent states with less than 10 but not zero."</code></pre>
 </div>
 </div>
-<p>Conclusion:</p>
-<p>Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with outside information. With these caveats in mind, the effects of 0 ozone samples are uncertain and results show that Alaska is the best place for ozone pollution, Tennessee the worst, and California falls near average.</p>
+<p>Given the limits of this analysis, factors or potential correlations cannot be ruled out without additional analysis or consultation with external information. With these caveats in mind, the effects of zero ozone samples are uncertain. The results show that Alaska is the best place for ozone pollution, Tennessee is the worst, and California falls near the average.</p>
 </section>
 <section id="cole-hammes-section" class="level1">
 <h1>Cole Hammes’ Section</h1>
