@@ -682,9 +682,11 @@ ggplot(avg_NO2_merged_states_2023, aes(x = long, y = lat, group = group, fill = 
        fill = "Avg_NO2_AQI") 
 ```
 
-The two visualizations of the US above show a significant reduction in NO2 AQI across all states comparing 2000 to 2023, reflecting progress in controlling pollutants and reducing emissions. States with high populations and urban sprawl, which historically faced higher NO2 levels, have seen notable improvements. This progress can be attributed to stricter environmental policies, such as the 1990 amendments to the Clean Air Act, which set tighter emission standards and promoted cleaner technologies like low-emission and zero-emission vehicles.
+The two visualizations of the US above show a significant reduction in NO2 AQI mean across all states comparing 2000 to 2023, reflecting progress in controlling pollutants and reducing emissions. States with high populations and urban sprawl, which historically faced higher NO2 levels, have seen notable improvements. This progress can be attributed to stricter environmental policies, such as the 1990 amendments to the Clean Air Act, which set tighter emission standards and promoted cleaner technologies like low-emission and zero-emission vehicles.
 
 The US maps also highlight the contrast between urban and rural areas. Urban states, with higher populations and industrial activity, consistently show higher NO2 levels. Continued efforts to reduce emissions are crucial, especially in cities where pollution has the greatest impact on residents.
+
+What are the NO2 outliers for a given state and how can that give insight to the problem?
 
 ```{r}
 #| code-fold: true
@@ -744,6 +746,8 @@ outliers_cali <- visualize_outliers(airquality_data, "California")
 outliers_cali
 ```
 
+Focusing on California we can see the reduction in NO2 occur through the outliers. This is a boxplot which allows us to see the reduction of huge outliers in cities within California. The amount of outliers have steadily been declining as the years went on which goes hand in hand in showing why the mean has dropped from 30 to 15.6 (as shown in the two US maps above). As shown on the boxplot, the median appears to be dropping but not as drastically as the mean did. This shows that the improvements in regulating this pollutant was focused on targeting the excess of NO2 emissions aka the outliers of the data.
+
 Question: What are the top 5 states with the worse pollution in the year 2000 and 2023?
 
 ```{r}
@@ -765,7 +769,7 @@ top_5_states_2000
 
 Gathering the top 5 states is essential to understand the difference in NO2 levels throughout the year. We can see that the top 5 states with the highest NO2 pollution in 2023, don't even surpass the 5th highest state of 2000 (New York). This shows clear progress nationally in the effort to combat this toxic pollutant.
 
-Question: How have NO2 levels changed over time in a selected State?
+Question: How have NO2 levels changed over time in a selected State and how does it compare to other pollutants?
 
 ```{r}
 #| code-fold: true
@@ -814,11 +818,8 @@ cali_plots <- analyze_state_pollution(data = airquality_data, state_name = "Cali
 cali_plots
 ```
 
-```{r}
-#| code-fold: true
-col_plots <- analyze_state_pollution(data = airquality_data, state_name = "Colorado")
+California has experienced a significant reduction in NO2 levels from 2000 to 2023, as reflected in our map of the United States. This trend aligns with the state's stringent environmental policies, including strict vehicle emission standards and the adoption of clean energy technologies. California's focus on promoting zero-emission vehicles, such as electric cars, and improving public transportation has played a key role in reducing urban air pollution. Additionally, tighter regulations on industrial emissions and cleaner energy initiatives have further contributed to the decline in NO2 levels, demonstrating the effectiveness of targeted efforts to improve air quality.
 
-col_plots
-```
+The maximum levels of NO2, ozone, sulfur dioxide, and carbon monoxide have all shown a notable decrease from 2000 to 2023, highlighting significant progress in reducing air pollution across the board. this is encouraging as these peaks are often associated with severe health and environmental consequences. This effectiveness of all pollutants can continue if the US continues to invest in the environment as it has.
 
 # Project Conclusion
