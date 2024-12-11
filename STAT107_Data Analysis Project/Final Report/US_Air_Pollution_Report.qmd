@@ -5,3 +5,13 @@ date: "December 11th, 2024"
 format: html
 editor: visual
 ---
+
+```{r}
+library(tidyverse)
+
+library(maps)
+```
+
+```{r}
+airquality_data <- read_csv("pollution_2000_2023.csv")
+```
